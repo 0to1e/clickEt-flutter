@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ClickEt/views/splash_screen_view.dart';
+import 'package:ClickEt/views/splash_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
