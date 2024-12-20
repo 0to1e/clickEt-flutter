@@ -1,7 +1,7 @@
+import 'package:ClickEt/views/dash_board_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ClickEt/common/button.dart';
 import 'package:ClickEt/views/registration_screen.dart';
-import 'package:ClickEt/views/dashboard_screen.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
