@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:ClickEt/common/button.dart';
-import 'package:ClickEt/views/login_screen.dart';
-import 'package:ClickEt/views/registration_screen.dart';
 
-class AuthScreenView extends StatelessWidget {
-  const AuthScreenView({super.key});
+import 'package:ClickEt/app/di/di.dart';
+import 'package:ClickEt/common/button.dart';
+import 'package:ClickEt/features/get_started/presentation/view_model/get_started_cubit.dart';
+
+class GetStartedView extends StatelessWidget {
+  const GetStartedView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,8 @@ class AuthScreenView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                        "lib/assets/illustrations/onboarding/combined.png"),
+                      "lib/assets/illustrations/onboarding/combined.png",
+                    ),
                     const SizedBox(height: 32.0),
                     Text(
                       'Unlock the Movie Magic',
@@ -42,22 +44,14 @@ class AuthScreenView extends StatelessWidget {
                 children: [
                   Button(
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginView()),
-                      );
+                      getIt<GetStartedCubit>().navigateToLogin(context);
                     },
                     text: 'Sign In',
                   ),
                   const SizedBox(height: 16.0),
                   Button(
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const RegistrationView()),
-                      );
+                      getIt<GetStartedCubit>().navigateToRegistration(context);
                     },
                     backgroundColor: Colors.transparent,
                     textColor: Theme.of(context).colorScheme.primary,
