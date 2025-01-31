@@ -12,9 +12,9 @@ class AuthRemoteRepository implements IAuthRepository {
   AuthRemoteRepository(this._authRemoteDataSource);
 
   @override
-  Future<Either<Failure, void>> registerStudent(AuthEntity user) async {
+  Future<Either<Failure, void>> registerUser(AuthEntity user) async {
     try {
-      await _authRemoteDataSource.registerStudent(user);
+      await _authRemoteDataSource.registerUser(user);
       return const Right(null);
     } catch (e) {
       return Left(ApiFailure(message: e.toString()));
@@ -28,9 +28,15 @@ class AuthRemoteRepository implements IAuthRepository {
   }
 
   @override
-  Future<Either<Failure, String>> loginStudent(String username, String password) {
-    // TODO: implement loginStudent
-    throw UnimplementedError();
+  Future<Either<Failure, String>> loginUser(
+      String username, String password) async {
+    try {
+      final token =
+          await _authRemoteDataSource.loginUser(username, password);
+      return Right(token);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
   }
 
   @override

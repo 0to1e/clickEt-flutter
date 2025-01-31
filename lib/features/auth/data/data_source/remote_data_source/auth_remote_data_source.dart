@@ -11,7 +11,7 @@ class AuthRemoteDataSource implements IAuthDataSource {
   AuthRemoteDataSource(this._dio);
 
   @override
-  Future<void> registerStudent(AuthEntity user) async {
+  Future<void> registerUser(AuthEntity user) async {
     try {
       Response response = await _dio.post(
         ApiEndpoints.register,
@@ -41,11 +41,30 @@ class AuthRemoteDataSource implements IAuthDataSource {
     throw UnimplementedError();
   }
 
-  @override
-  Future<String> loginStudent(String username, String password) {
-    // TODO: implement loginStudent
-    throw UnimplementedError();
+@override
+  Future<String> loginUser(String username, String password) async {
+    try {
+      Response response = await _dio.post(
+        ApiEndpoints.login,
+        data: {
+          "user_name": username,
+          "password": password,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final str = response.data['accessToken'];
+        return str;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      throw Exception(e);
+    } catch (e) {
+      throw Exception(e);
+    }
   }
+
 
   @override
   Future<String> uploadProfilePicture(File file) {
