@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-
 import 'package:ClickEt/app/usecase/usecase.dart';
 import 'package:ClickEt/core/error/failure.dart';
 import 'package:ClickEt/features/auth/domain/entity/auth_entity.dart';
@@ -47,6 +46,6 @@ class RegisterUseCase implements UsecaseWithParams<void, RegisterUserParams> {
       phoneNumber: params.phoneNumber,
       password: params.password,
     );
-    return repository.registerStudent(authEntity);
+    return repository.registerUser(authEntity);
   }
 }

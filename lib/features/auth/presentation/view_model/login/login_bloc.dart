@@ -120,7 +120,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           const SnackBar(content: Text("Invalid Credentials")),
         );
       },
-      (success) {
+      (token) {
         emit(state.copyWith(isLoading: false, isSuccess: true));
         Navigator.pushReplacement(
           event.context,
