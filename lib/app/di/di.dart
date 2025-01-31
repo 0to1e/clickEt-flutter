@@ -1,3 +1,7 @@
+import 'package:ClickEt/core/network/api_service.dart';
+import 'package:ClickEt/features/auth/data/data_source/remote_data_source/auth_remote_data_source.dart';
+import 'package:ClickEt/features/auth/data/repository/auth_remote_repository.dart';
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ClickEt/features/auth/data/data_source/local_data_source/auth_local_data_source.dart';
 import 'package:ClickEt/features/auth/data/repository/auth_local_repository.dart';
@@ -19,7 +23,7 @@ Future<void> initDependencies() async {
   try {
     // Initialize Hive service
     await _initHiveService();
-
+    await _initApiService();
     // Initialize data sources and repositories
     _initAuthDataSourcesAndRepositories();
 
@@ -37,13 +41,26 @@ Future<void> _initHiveService() async {
   getIt.registerLazySingleton<HiveService>(() => HiveService());
 }
 
+Future<void> _initApiService() async{
+  // Remote Data Source
+  getIt.registerLazySingleton<Dio>(
+    () => ApiService(Dio()).dio,
+  );
+}
+
 void _initAuthDataSourcesAndRepositories() {
   getIt.registerLazySingleton<AuthLocalDataSource>(
     () => AuthLocalDataSource(getIt<HiveService>()),
   );
+  getIt.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSource(getIt<Dio>()),
+  );
 
   getIt.registerLazySingleton<AuthLocalRepository>(
     () => AuthLocalRepository(getIt<AuthLocalDataSource>()),
+  );
+  getIt.registerLazySingleton<AuthRemoteRepository>(
+    () => AuthRemoteRepository(getIt<AuthRemoteDataSource>()),
   );
 }
 
@@ -53,7 +70,7 @@ void _initUseCases() {
   );
 
   getIt.registerLazySingleton<RegisterUseCase>(
-    () => RegisterUseCase(getIt<AuthLocalRepository>()),
+    () => RegisterUseCase(getIt<AuthRemoteRepository>()),
   );
 }
 
