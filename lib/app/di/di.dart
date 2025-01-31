@@ -87,7 +87,7 @@ void _initUseCases() {
   );
 }
 
-Future<void > _initSharedPrefs() async{
+Future<void> _initSharedPrefs() async {
   getIt.registerLazySingleton<TokenSharedPrefs>(
     () => TokenSharedPrefs(getIt<SharedPreferences>()),
   );

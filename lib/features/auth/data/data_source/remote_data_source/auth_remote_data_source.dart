@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:ClickEt/app/constants/api_constants.dart';
+import 'package:ClickEt/app/constants/api_endpoints.dart';
 import 'package:ClickEt/features/auth/data/data_source/auth_data_source.dart';
 import 'package:dio/dio.dart';
 import 'package:ClickEt/features/auth/domain/entity/auth_entity.dart';
