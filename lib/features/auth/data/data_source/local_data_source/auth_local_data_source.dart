@@ -34,10 +34,10 @@ class AuthLocalDataSource implements IAuthDataSource {
   }
 
   @override
-  Future<void> registerUser(AuthEntity student) async {
+  Future<void> registerUser(AuthEntity user) async {
     try {
       // Convert AuthEntity to AuthHiveModel
-      final authHiveModel = AuthHiveModel.fromEntity(student);
+      final authHiveModel = AuthHiveModel.fromEntity(user);
 
       await _hiveService.register(authHiveModel);
       return Future.value();
