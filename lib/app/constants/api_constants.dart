@@ -13,7 +13,9 @@ class ApiEndpoints {
   // static const String imageUrl = "http://10.0.2.2:3000/uploads/";
   // static const String uploadImage = "auth/uploadImage";
 
-  // ====================== <> Routes ======================
+    // ====================== Movie Routes ======================
+  static const String getShowingMovies = "movie/status/showing";
+  static const String getUpcomingMovies = "movie/status/upcoming";
 
 
   // ====================== <> Routes ======================

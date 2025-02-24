@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 import 'package:ClickEt/core/error/failure.dart';
 import 'package:ClickEt/features/auth/domain/entity/auth_entity.dart';
 import 'package:ClickEt/features/auth/domain/repository/auth_repository.dart';
+import 'package:dio/dio.dart';
 
 class AuthRemoteRepository implements IAuthRepository {
   final AuthRemoteDataSource _authRemoteDataSource;
@@ -28,7 +29,7 @@ class AuthRemoteRepository implements IAuthRepository {
   }
 
   @override
-  Future<Either<Failure, String>> loginUser(
+  Future<Either<Failure, Response>> loginUser(
       String username, String password) async {
     try {
       final token =

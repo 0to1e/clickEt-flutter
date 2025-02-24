@@ -1,4 +1,3 @@
-import 'package:ClickEt/app/shared_prefs/token_shared_prefs.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
@@ -26,24 +25,25 @@ class LoginParams extends Equatable {
 
 class LoginUseCase implements UsecaseWithParams<String, LoginParams> {
   final IAuthRepository repository;
-  final TokenSharedPrefs tokenSharedPrefs;
 
-  LoginUseCase(this.repository, this.tokenSharedPrefs);
+  LoginUseCase(this.repository);
 
   @override
-  Future<Either<Failure, String>> call(LoginParams params) {
-    // Save token in Shared Preferences
-    return repository.loginUser(params.username, params.password).then((value) {
-      return value.fold(
-        (failure) => Left(failure),
-        (token) {
-          tokenSharedPrefs.saveToken(token);
-          tokenSharedPrefs.getToken().then((value) {
-            print(value);
-          });
-          return Right(token);
-        },
-      );
-    });
+  Future<Either<Failure, String>> call(LoginParams params) async {
+    final result = await repository.loginUser(params.username, params.password);
+
+    return result.fold(
+      (failure) => Left(failure),
+      (response) {
+        final String? accessToken = response.data['accessToken'];
+
+        if (accessToken == null) {
+          return const Left(
+              ApiFailure(message: "Access token not found in response"));
+        }
+
+        return Right(accessToken);
+      },
+    );
   }
 }

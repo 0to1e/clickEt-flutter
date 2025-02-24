@@ -78,7 +78,6 @@ void _initUseCases() {
   getIt.registerLazySingleton<LoginUseCase>(
     () => LoginUseCase(
       getIt<AuthRemoteRepository>(),
-      getIt<TokenSharedPrefs>(),
     ),
   );
 
