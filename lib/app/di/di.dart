@@ -94,7 +94,9 @@ Future<void> _iniitAuthDependencies() async {
 
   getIt.registerFactory<LoginBloc>(
     () => LoginBloc(
-        loginUseCase: getIt<LoginUseCase>(), movieBloc: getIt<MovieBloc>()),
+        loginUseCase: getIt<LoginUseCase>(),
+        movieBloc: getIt<MovieBloc>(),
+        hiveService: getIt<HiveService>()),
   );
 
   getIt.registerFactory<RegisterBloc>(
@@ -130,7 +132,6 @@ Future<void> _initHomeDependencies() async {
 }
 
 Future<void> _initMovieDependencies() async {
-  
   getIt.registerLazySingleton<MovieRepository>(
     () => MovieRepository(getIt<RemoteMovieRepository>(),
         getIt<LocalMovieRepository>(), getIt<Connectivity>()),
@@ -141,10 +142,9 @@ Future<void> _initMovieDependencies() async {
   getIt.registerLazySingleton<LocalMovieRepository>(
     () => LocalMovieRepository(getIt<LocalMovieDataSource>()),
   );
-  
+
   getIt.registerLazySingleton<RemoteMovieDataSource>(
       () => RemoteMovieDataSource(getIt<Dio>()));
-
 
   getIt.registerLazySingleton<LocalMovieDataSource>(
       () => LocalMovieDataSource(getIt<HiveService>()));
@@ -156,7 +156,7 @@ Future<void> _initMovieDependencies() async {
         getUpcomingMoviesUseCase: getIt<GetUpcomingMoviesUseCase>(),
         getShowingMoviesUseCase: getIt<GetShowingMoviesUseCase>(),
         cacheMoviesUseCase: getIt<CacheMoviesUseCase>(),
-         connectivity: getIt<Connectivity>()),
+        connectivity: getIt<Connectivity>()),
   );
 
   getIt.registerLazySingleton<GetShowingMoviesUseCase>(
