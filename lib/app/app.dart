@@ -11,12 +11,15 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'ClickEt',
-        theme: AppTheme.getApplicationTheme(isDarkMode: false),
-        home: BlocProvider.value(
-          value: getIt<SplashCubit>(),
-          child: const SplashView(),
-        ));
+      debugShowCheckedModeBanner: false,
+      title: 'ClickEt',
+      theme: AppTheme.getApplicationTheme(isDarkMode: false),
+      darkTheme: AppTheme.getApplicationTheme(isDarkMode: true),
+      themeMode: ThemeMode.system,
+      home: BlocProvider.value(
+        value: getIt<SplashCubit>(),
+        child: const SplashView(),
+      ),
+    );
   }
 }
