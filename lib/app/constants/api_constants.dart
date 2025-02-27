@@ -5,6 +5,7 @@ class ApiEndpoints {
   static const String home = "192.168.1.11";
   static const String lr2 = "172.26.1.54";
   static const String softwarica = "172.25.7.25";
+  static const String lr1 = "172.25.7.25";
 
   static const Duration connectionTimeout = Duration(seconds: 1000);
   static const Duration receiveTimeout = Duration(seconds: 1000);
