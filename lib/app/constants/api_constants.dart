@@ -9,7 +9,7 @@ class ApiEndpoints {
 
   static const Duration connectionTimeout = Duration(seconds: 1000);
   static const Duration receiveTimeout = Duration(seconds: 1000);
-  static const String baseUrl = "http://$softwarica:8080/api/v1/";
+  static const String baseUrl = "http://$home:8080/api/v1/";
   // For iPhone
   //static const String baseUrl = "http://localhost:3000/api/v1/";
 
@@ -23,5 +23,6 @@ class ApiEndpoints {
   static const String getShowingMovies = "movie/status/showing";
   static const String getUpcomingMovies = "movie/status/upcoming";
 
-  // ====================== <> Routes ======================
+  // ====================== Screening Routes ======================
+  static const String getScreeningbyMovie = "screening/byMovie/";
 }
