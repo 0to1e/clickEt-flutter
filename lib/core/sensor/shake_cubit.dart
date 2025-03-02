@@ -21,7 +21,7 @@ class ShakeCubit extends Cubit<bool> {
     _accelerometerSubscription = accelerometerEventStream().listen((event) {
       double acceleration = event.x.abs() + event.y.abs() + event.z.abs();
 
-      if (acceleration > 20) { // Shake threshold
+      if (acceleration > 40) { // Shake threshold
         debugPrint("🔥 Shake Detected: Refreshing Movies List");
         _refreshMoviesList();
       }
