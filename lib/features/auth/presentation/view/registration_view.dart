@@ -1,6 +1,6 @@
 
 import 'package:ClickEt/app/di/di.dart';
-import 'package:ClickEt/common/button.dart';
+import 'package:ClickEt/common/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ClickEt/features/auth/presentation/view_model/register/register_bloc.dart';
