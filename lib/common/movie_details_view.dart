@@ -1,4 +1,5 @@
 import 'package:ClickEt/features/screenig/presentation/view_model/screening_bloc.dart';
+import 'package:ClickEt/features/seats/presentation/view/seat_selection_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ClickEt/app/di/di.dart';
@@ -210,8 +211,34 @@ class MovieDetailsView extends StatelessWidget {
                       state.selectedTheatre != null &&
                       state.selectedTime != null &&
                       state.selectedHall != null;
+                  if (!isEnabled) return const SizedBox.shrink();
+
+                  final selectedScreening = state.screenings.firstWhere(
+                    (s) =>
+                        s.startTime.toLocal().toString().split(' ')[0] ==
+                            state.selectedDate &&
+                        s.theatreName == state.selectedTheatre &&
+                        s.startTime
+                                .toLocal()
+                                .toString()
+                                .split(' ')[1]
+                                .substring(0, 5) ==
+                            state.selectedTime &&
+                        s.hallName == state.selectedHall,
+                    orElse: () =>
+                        throw Exception('No matching screening found'),
+                  );
+
                   return ElevatedButton(
-                    onPressed: isEnabled ? () => print('Book seat!') : null,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SeatSelectionView(
+                              screeningId: selectedScreening.screeningId),
+                        ),
+                      );
+                    },
                     child: const Text('Book Seat'),
                   );
                 },
