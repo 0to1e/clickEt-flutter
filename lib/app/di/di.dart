@@ -17,6 +17,15 @@ import 'package:ClickEt/features/screenig/data/repository/screening_remote_repos
 import 'package:ClickEt/features/screenig/domain/repository/screening_repository.dart';
 import 'package:ClickEt/features/screenig/domain/usecase/get_screening_by_movie_usecase.dart';
 import 'package:ClickEt/features/screenig/presentation/view_model/screening_bloc.dart';
+import 'package:ClickEt/features/seats/data/data_source/remote_data_source/seat_remote_data_source.dart';
+import 'package:ClickEt/features/seats/data/data_source/seat_data_source.dart';
+import 'package:ClickEt/features/seats/data/repository/seat_remote_repository.dart';
+import 'package:ClickEt/features/seats/domain/repository/seat_repository.dart';
+import 'package:ClickEt/features/seats/domain/use_case/confirm_booking_use_case.dart';
+import 'package:ClickEt/features/seats/domain/use_case/get_seat_layout_use_case.dart';
+import 'package:ClickEt/features/seats/domain/use_case/hold_seats_use_case.dart';
+import 'package:ClickEt/features/seats/domain/use_case/release_hold_use_case.dart';
+import 'package:ClickEt/features/seats/presentation/view_model/seat_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
@@ -49,6 +58,7 @@ Future<void> initDependencies() async {
     await _initHomeDependencies();
     await _initMovieDependencies();
     await _initScreeningDependencies();
+    await _initSeatDependencies();
   } catch (e) {
     logger.e("Error initializing dependencies: $e");
   }
@@ -193,8 +203,44 @@ Future<void> _initScreeningDependencies() async {
   );
 
   getIt.registerFactory<ScreeningBloc>(
-  () => ScreeningBloc(
-    getScreeningsByMovieUseCase: getIt<GetScreeningsByMovieUseCase>(),
-  ),
-);
+    () => ScreeningBloc(
+      getScreeningsByMovieUseCase: getIt<GetScreeningsByMovieUseCase>(),
+    ),
+  );
+}
+
+Future<void> _initSeatDependencies() async {
+  // Register Data Source
+  getIt.registerLazySingleton<ISeatDataSource>(
+    () => SeatRemoteDataSource(getIt<Dio>()),
+  );
+
+  // Register Repository
+  getIt.registerLazySingleton<ISeatRepository>(
+    () => SeatRemoteRepository(getIt<ISeatDataSource>()),
+  );
+
+  // Register Use Cases
+  getIt.registerLazySingleton<GetSeatLayoutUseCase>(
+    () => GetSeatLayoutUseCase(getIt<ISeatRepository>()),
+  );
+  getIt.registerLazySingleton<HoldSeatsUseCase>(
+    () => HoldSeatsUseCase(getIt<ISeatRepository>()),
+  );
+  getIt.registerLazySingleton<ReleaseHoldUseCase>(
+    () => ReleaseHoldUseCase(getIt<ISeatRepository>()),
+  );
+  getIt.registerLazySingleton<ConfirmBookingUseCase>(
+    () => ConfirmBookingUseCase(getIt<ISeatRepository>()),
+  );
+
+  // Register BLoC
+  getIt.registerFactory<SeatBloc>(
+    () => SeatBloc(
+      getSeatLayoutUseCase: getIt<GetSeatLayoutUseCase>(),
+      holdSeatsUseCase: getIt<HoldSeatsUseCase>(),
+      releaseHoldUseCase: getIt<ReleaseHoldUseCase>(),
+      confirmBookingUseCase: getIt<ConfirmBookingUseCase>(),
+    ),
+  );
 }
