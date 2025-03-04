@@ -19,7 +19,7 @@ class ApiEndpoints {
   static const String logout = "auth/logout";
   static const String getUser = "auth/user/status";
   static const String deleteUser = "auth/delete";
-  static const String uploadImage = "auth/user/upload";
+  static const String uploadProfile = "auth/user/upload";
 
   // ====================== Movie Routes ======================
   static const String getShowingMovies = "movie/status/showing";

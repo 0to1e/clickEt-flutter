@@ -1,4 +1,4 @@
-import 'package:ClickEt/app/constants/api_constants.dart';
+import 'package:ClickEt/app/constants/api_endpoints.dart';
 import 'package:ClickEt/app/di/di.dart';
 import 'package:ClickEt/common/widgets/booking_widgets_dialog.dart';
 import 'package:ClickEt/features/bookings/domain/entity/booking_entity.dart';

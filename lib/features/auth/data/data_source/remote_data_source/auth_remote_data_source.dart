@@ -73,7 +73,7 @@ class AuthRemoteDataSource implements IAuthDataSource {
             filename: file.path.split('/').last),
       });
       final response = await _dio.patch(
-        ApiEndpoints.uploadImage,
+        ApiEndpoints.uploadProfile,
         data: formData,
       );
       if (response.statusCode == 200) {

@@ -1,8 +1,7 @@
-// lib/features/booking/data/data_source/remote_data_source/booking_remote_data_source.dart
 import 'package:ClickEt/features/bookings/data/model/booking_api_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:ClickEt/app/constants/api_constants.dart';
+import 'package:ClickEt/app/constants/api_endpoints.dart';
 import 'package:ClickEt/core/error/failure.dart';
 
 class BookingRemoteDataSource {

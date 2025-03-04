@@ -1,5 +1,6 @@
 
 import 'package:ClickEt/app/di/di.dart';
+import 'package:ClickEt/common/image_upload_dialog.dart';
 import 'package:ClickEt/common/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -14,7 +14,7 @@ void main() {
   setUp(() {
     repository = MockAuthRepository();
     tokenSharedPrefs = MockTokenSharedPrefs();
-    loginUseCase = LoginUseCase(repository, tokenSharedPrefs);
+    loginUseCase = LoginUseCase(repository);
   });
   const userLoginParams = LoginParams(
     username: "r01en",

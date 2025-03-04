@@ -1,4 +1,4 @@
-import 'package:ClickEt/app/constants/api_constants.dart';
+import 'package:ClickEt/app/constants/api_endpoints.dart';
 import 'package:ClickEt/features/seats/data/data_source/seat_data_source.dart';
 import 'package:ClickEt/features/seats/data/model/seat_api_model.dart';
 import 'package:ClickEt/features/seats/domain/entity/seat_entity.dart';

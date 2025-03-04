@@ -1,4 +1,4 @@
-import 'package:ClickEt/app/constants/api_constants.dart';
+import 'package:ClickEt/app/constants/api_endpoints.dart';
 import 'package:ClickEt/core/error/failure.dart';
 import 'package:ClickEt/features/movie/data/model/movie_api_model.dart';
 import 'package:ClickEt/features/movie/domain/entity/movie_entity.dart';

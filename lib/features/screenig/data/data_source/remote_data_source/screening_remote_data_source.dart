@@ -1,7 +1,7 @@
 import 'package:ClickEt/features/screenig/data/data_source/screening_data_source.dart';
 import 'package:ClickEt/features/screenig/domain/entity/screening_entity.dart';
 import 'package:dio/dio.dart';
-import 'package:ClickEt/app/constants/api_constants.dart';
+import 'package:ClickEt/app/constants/api_endpoints.dart';
 import 'package:ClickEt/core/error/failure.dart';
 import 'package:dartz/dartz.dart';
 
