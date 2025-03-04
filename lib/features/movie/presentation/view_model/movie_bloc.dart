@@ -4,6 +4,7 @@ import 'package:ClickEt/features/movie/domain/use_case/get_showing_use_case.dart
 import 'package:ClickEt/features/movie/domain/use_case/get_upcoming_use_case.dart';
 import 'package:ClickEt/features/movie/domain/use_case/cache_movies_use_case.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -23,6 +24,7 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
     required this.connectivity,
   }) : super(const MovieState()) {
     on<FetchAllMoviesEvent>(_onFetchAllMovies);
+    on<RefreshMoviesEvent>(_onRefreshMovies);
   }
 
   Future<void> _onFetchAllMovies(
@@ -43,15 +45,13 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
           String? errorMessage;
           if (showingResult.isLeft()) {
             errorMessage = showingResult.fold(
-              (failure) => failure.message, 
-              (success) => null, 
+              (failure) => failure.message,
+              (success) => null,
             );
-          }
-
-          else if (upcomingResult.isLeft()) {
+          } else if (upcomingResult.isLeft()) {
             errorMessage = upcomingResult.fold(
-              (failure) => failure.message, 
-              (success) => null, 
+              (failure) => failure.message,
+              (success) => null,
             );
           }
           emit(state.copyWith(
@@ -106,6 +106,32 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
           errorMessage: 'Error retrieving cached movies: $e',
         ));
       }
+    }
+  }
+
+  Future<void> _onRefreshMovies(
+    RefreshMoviesEvent event,
+    Emitter<MovieState> emit,
+  ) async {
+    debugPrint("🔄 Refreshing movies list...");
+    emit(state.copyWith(isLoading: true));
+    final showingResult = await getShowingMoviesUseCase();
+    final upcomingResult = await getUpcomingMoviesUseCase();
+
+    if (showingResult.isRight() && upcomingResult.isRight()) {
+      final showingMovies = showingResult.toOption().getOrElse(() => []);
+      final upcomingMovies = upcomingResult.toOption().getOrElse(() => []);
+
+      emit(state.copyWith(
+        isLoading: false,
+        showingMovies: showingMovies,
+        upcomingMovies: upcomingMovies,
+      ));
+
+      debugPrint("✅ Movies refreshed successfully!");
+    } else {
+      emit(state.copyWith(
+          isLoading: false, errorMessage: "Failed to refresh movies"));
     }
   }
 }

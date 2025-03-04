@@ -8,8 +8,14 @@ abstract class MovieEvent extends Equatable {
 }
 
 class FetchAllMoviesEvent extends MovieEvent {
-
   const FetchAllMoviesEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class RefreshMoviesEvent extends MovieEvent {
+  const RefreshMoviesEvent();
 
   @override
   List<Object> get props => [];

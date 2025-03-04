@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:ClickEt/core/network/api_service.dart';
+import 'package:ClickEt/core/sensor/shake_cubit.dart';
 import 'package:ClickEt/features/auth/data/data_source/remote_data_source/auth_remote_data_source.dart';
 import 'package:ClickEt/features/auth/data/repository/auth_remote_repository.dart';
 import 'package:ClickEt/features/movie/data/data_source/local_data_source/movie_local_data_source.dart';
@@ -31,6 +33,7 @@ final logger = Logger();
 
 Future<void> initDependencies() async {
   try {
+    await _initAccelerometerDependency();
     await _initHiveService();
     await _initApiService();
     await _initConnectivityService();
@@ -48,6 +51,11 @@ Future<void> initDependencies() async {
 Future<void> _initHiveService() async {
   await HiveService.init();
   getIt.registerLazySingleton<HiveService>(() => HiveService());
+}
+
+Future<void> _initAccelerometerDependency() async {
+  getIt.registerLazySingleton<ShakeCubit>(
+      () => ShakeCubit(movieBloc: getIt<MovieBloc>()));
 }
 
 Future<void> _initConnectivityService() async {
@@ -96,7 +104,8 @@ Future<void> _iniitAuthDependencies() async {
     () => LoginBloc(
         loginUseCase: getIt<LoginUseCase>(),
         movieBloc: getIt<MovieBloc>(),
-        hiveService: getIt<HiveService>()),
+        hiveService: getIt<HiveService>(),
+        shakeCubit: getIt<ShakeCubit>()),
   );
 
   getIt.registerFactory<RegisterBloc>(
@@ -151,14 +160,13 @@ Future<void> _initMovieDependencies() async {
   getIt.registerLazySingleton<CacheMoviesUseCase>(
     () => CacheMoviesUseCase(getIt<LocalMovieDataSource>()),
   );
-  getIt.registerFactory<MovieBloc>(
+  getIt.registerLazySingleton<MovieBloc>(
     () => MovieBloc(
         getUpcomingMoviesUseCase: getIt<GetUpcomingMoviesUseCase>(),
         getShowingMoviesUseCase: getIt<GetShowingMoviesUseCase>(),
         cacheMoviesUseCase: getIt<CacheMoviesUseCase>(),
         connectivity: getIt<Connectivity>()),
   );
-
   getIt.registerLazySingleton<GetShowingMoviesUseCase>(
       () => GetShowingMoviesUseCase(getIt<MovieRepository>()));
   getIt.registerLazySingleton<GetUpcomingMoviesUseCase>(

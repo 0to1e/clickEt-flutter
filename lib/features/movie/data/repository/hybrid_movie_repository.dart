@@ -22,16 +22,13 @@ class MovieRepository implements IMovieRepository {
         cacheMovies,
   }) async {
     final connectivityResult = await _connectivity.checkConnectivity();
-    debugPrint("Connectivity result: $connectivityResult");
     if (connectivityResult != ConnectivityResult.none) {
-      debugPrint("Fetching movies from remote source");
       final result = await remoteFetch();
       result.fold(
         (failure) {
           debugPrint("Remote fetch failed: ${failure.message}");
         },
         (movies) {
-          debugPrint("Fetched ${movies.length} movies from remote source");
           cacheMovies(movies);
         },
       );
