@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:ClickEt/app/constants/api_constants.dart';
 import 'package:ClickEt/features/auth/data/data_source/auth_data_source.dart';
+import 'package:ClickEt/features/auth/data/model/auth_api_model.dart';
 import 'package:dio/dio.dart';
 import 'package:ClickEt/features/auth/domain/entity/auth_entity.dart';
 
@@ -41,7 +42,7 @@ class AuthRemoteDataSource implements IAuthDataSource {
     throw UnimplementedError();
   }
 
-@override
+  @override
   Future<Response> loginUser(String username, String password) async {
     try {
       Response response = await _dio.post(
@@ -53,7 +54,6 @@ class AuthRemoteDataSource implements IAuthDataSource {
       );
 
       if (response.statusCode == 200) {
-       
         return response;
       } else {
         throw Exception(response.statusMessage);
@@ -65,10 +65,74 @@ class AuthRemoteDataSource implements IAuthDataSource {
     }
   }
 
+  @override
+  Future<String> uploadProfilePicture(File file) async {
+    try {
+      final formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(file.path,
+            filename: file.path.split('/').last),
+      });
+      final response = await _dio.patch(
+        ApiEndpoints.uploadImage,
+        data: formData,
+      );
+      if (response.statusCode == 200) {
+        final String uploadedUrl = response.data['url'];
+        return uploadedUrl;
+      } else {
+        throw Exception('Failed to upload profile picture');
+      }
+    } catch (e) {
+      throw Exception('Upload failed: $e');
+    }
+  }
 
   @override
-  Future<String> uploadProfilePicture(File file) {
-    // TODO: implement uploadProfilePicture
-    throw UnimplementedError();
+  Future<void> logout() async {
+    try {
+      final response = await _dio.post(ApiEndpoints.logout);
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception('Logout failed: $e');
+    }
+  }
+
+  @override
+  Future<AuthEntity> getUserStatus() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.getUser);
+      if (response.statusCode == 200) {
+        final userJson = response.data['user'];
+        final apiModel = AuthApiModel.fromJson(userJson);
+        final entity = apiModel.toEntity();
+        return entity;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      throw Exception(
+          e.response?.data['message'] ?? 'Failed to fetch user status');
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<void> deleteUser(String username) async {
+    try {
+      final response =
+          await _dio.delete('${ApiEndpoints.deleteUser}/$username');
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception('Failed to delete user: $e');
+    }
   }
 }
