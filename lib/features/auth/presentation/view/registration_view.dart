@@ -203,15 +203,15 @@
 //                 width: 150.0,
 //                 onPressed: () {
 //                   context.read<RegisterBloc>().add(
-//                         RegisterUser(
-//                           context: context,
-//                           fullName: fullNameController.text,
-//                           username: userNameController.text,
-//                           email: emailController.text,
-//                           phone: phoneController.text,
-//                           password: passwordController.text,
-//                         ),
-//                       );
+//                     RegisterUser(
+//                       context: context,
+//                       fullName: fullNameController.text,
+//                       username: userNameController.text,
+//                       email: emailController.text,
+//                       phone: phoneController.text,
+//                       password: passwordController.text,
+//                     ),
+//                   );
 //                 },
 //                 text: "Sign Up",
 //               ),
@@ -241,6 +241,30 @@
 //                   ),
 //                 ],
 //               ),
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Text(
+//                     "Upload your profile Image ",
+//                     style: Theme.of(context).textTheme.bodyLarge,
+//                   ),
+//                   GestureDetector(
+//                     onTap: () {
+//                       context.read<RegisterBloc>().navigateToLogin(context);
+//                     },
+//                     child: Text(
+//                       "Login",
+//                       style: TextStyle(
+//                         color: Theme.of(context).colorScheme.primary,
+//                         fontWeight: FontWeight.bold,
+//                         decoration: TextDecoration.underline,
+//                         decorationColor: Theme.of(context).colorScheme.primary,
+//                         decorationThickness: 2.0,
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
 //             ],
 //           ),
 //         ),
@@ -249,9 +273,9 @@
 //   }
 // }
 
-
 import 'package:ClickEt/app/di/di.dart';
 import 'package:ClickEt/common/button.dart';
+import 'package:ClickEt/common/image_upload_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ClickEt/features/auth/presentation/view_model/register/register_bloc.dart';
@@ -455,15 +479,15 @@ class RegistrationViewContent extends StatelessWidget {
                 width: 150.0,
                 onPressed: () {
                   context.read<RegisterBloc>().add(
-                    RegisterUser(
-                      context: context,
-                      fullName: fullNameController.text,
-                      username: userNameController.text,
-                      email: emailController.text,
-                      phone: phoneController.text,
-                      password: passwordController.text,
-                    ),
-                  );
+                        RegisterUser(
+                          context: context,
+                          fullName: fullNameController.text,
+                          username: userNameController.text,
+                          email: emailController.text,
+                          phone: phoneController.text,
+                          password: passwordController.text,
+                        ),
+                      );
                 },
                 text: "Sign Up",
               ),
@@ -492,6 +516,29 @@ class RegistrationViewContent extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 20),
+              // Upload Image Button
+              Button(
+                width: 150.0,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return ImageUploadDialog(
+                        onImagePicked: (file) {
+                          if (file != null) {
+                            context.read<RegisterBloc>().add(
+                                  UploadImageEvent(
+                                      image: file, context: context),
+                                );
+                          }
+                        },
+                      );
+                    },
+                  );
+                },
+                text: "Upload Image",
               ),
             ],
           ),
