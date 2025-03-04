@@ -27,10 +27,14 @@ class ApiEndpoints {
 
   // ====================== Screening Routes ======================
   static const String getScreeningbyMovie = "screening/byMovie/";
-  
+
   // ====================== Seat Routes ======================
   static const String layoutByScreening = "screening/getLayoutById";
   static const String holdSeats = "booking/hold";
   static const String releaseHold = "booking/hold/release";
   static const String confirmBooking = "booking/confirm";
+
+  // ====================== Seat Routes ======================
+  static const String bookingHistory = "booking/history";
+  static const String downloadTicket = "${ApiEndpoints.baseUrl}booking/download";
 }
