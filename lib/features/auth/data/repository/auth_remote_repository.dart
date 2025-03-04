@@ -23,26 +23,60 @@ class AuthRemoteRepository implements IAuthRepository {
   }
 
   @override
-  Future<Either<Failure, AuthEntity>> getCurrentUser() {
-    // TODO: implement getCurrentUser
-    throw UnimplementedError();
-  }
-
-  @override
   Future<Either<Failure, Response>> loginUser(
       String username, String password) async {
     try {
-      final token =
+      final response =
           await _authRemoteDataSource.loginUser(username, password);
-      return Right(token);
+      return Right(response);
     } catch (e) {
       return Left(ApiFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, String>> uploadProfilePicture(File file) {
-    // TODO: implement uploadProfilePicture
+  Future<Either<Failure, String>> uploadProfilePicture(File file) async {
+    try {
+      final uploadedUrl =
+          await _authRemoteDataSource.uploadProfilePicture(file);
+      return Right(uploadedUrl);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, AuthEntity>> getCurrentUser() {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, AuthEntity>> getUserStatus() async {
+    try {
+      final user = await _authRemoteDataSource.getUserStatus();
+      return Right(user);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> logout() async {
+    try {
+      await _authRemoteDataSource.logout();
+      return const Right(null);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteUser(String username) async {
+    try {
+      await _authRemoteDataSource.deleteUser(username);
+      return const Right(null);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
   }
 }
