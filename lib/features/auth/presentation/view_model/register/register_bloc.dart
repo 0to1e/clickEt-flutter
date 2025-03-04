@@ -1,5 +1,10 @@
+import 'dart:io';
+
+import 'package:ClickEt/app/constants/api_endpoints.dart';
 import 'package:ClickEt/app/di/di.dart';
+import 'package:ClickEt/app/shared_prefs/token_shared_prefs.dart';
 import 'package:ClickEt/features/auth/presentation/view_model/login/login_bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -18,6 +23,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     on<RegisterUser>(_onRegisterUser);
     on<TogglePasswordVisibilityEvent>(_onTogglePasswordVisibility);
     on<NavigateToLoginEvent>(_onNavigateToLogin);
+    on<UploadImageEvent>(_onUploadImage);
   }
 
   // Validation logic for registration form
@@ -134,6 +140,48 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
             ),
           ),
         );
+      },
+    );
+  }
+
+  void _onUploadImage(
+      UploadImageEvent event, Emitter<RegisterState> emit) async {
+    emit(state.copyWith(isLoading: true));
+
+    final dio = Dio();
+    final token = await getIt<TokenSharedPrefs>().getToken();
+    token.fold(
+      (failure) {
+        emit(state.copyWith(isLoading: false, error: failure.message));
+      },
+      (token) {
+        final formData = FormData.fromMap({
+          'image': MultipartFile.fromFileSync(event.image.path),
+        });
+
+        dio
+            .post(
+          ApiEndpoints.uploadProfile,
+          data: formData,
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        )
+            .then((response) {
+          if (response.statusCode == 200) {
+            emit(state.copyWith(isLoading: false, isSuccess: true));
+            ScaffoldMessenger.of(event.context).showSnackBar(
+              const SnackBar(
+                  content: Text("Profile image uploaded successfully")),
+            );
+          } else {
+            emit(state.copyWith(isLoading: false, error: 'Upload failed'));
+          }
+        }).catchError((error) {
+          emit(state.copyWith(isLoading: false, error: 'Upload failed'));
+        });
       },
     );
   }

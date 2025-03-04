@@ -204,15 +204,15 @@ class RegistrationViewContent extends StatelessWidget {
                 width: 150.0,
                 onPressed: () {
                   context.read<RegisterBloc>().add(
-                    RegisterUser(
-                      context: context,
-                      fullName: fullNameController.text,
-                      username: userNameController.text,
-                      email: emailController.text,
-                      phone: phoneController.text,
-                      password: passwordController.text,
-                    ),
-                  );
+                        RegisterUser(
+                          context: context,
+                          fullName: fullNameController.text,
+                          username: userNameController.text,
+                          email: emailController.text,
+                          phone: phoneController.text,
+                          password: passwordController.text,
+                        ),
+                      );
                 },
                 text: "Sign Up",
               ),
@@ -241,6 +241,29 @@ class RegistrationViewContent extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 20),
+              // Upload Image Button
+              Button(
+                width: 150.0,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return ImageUploadDialog(
+                        onImagePicked: (file) {
+                          if (file != null) {
+                            context.read<RegisterBloc>().add(
+                                  UploadImageEvent(
+                                      image: file, context: context),
+                                );
+                          }
+                        },
+                      );
+                    },
+                  );
+                },
+                text: "Upload Image",
               ),
             ],
           ),
