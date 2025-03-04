@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 ThemeData getThemeData() {
   return ThemeData(
-    colorScheme: const ColorScheme.light(
+    colorScheme: const ColorScheme.dark(
       primary: Color(0xFFD8021F),
       secondary: Color(0xFFB71C1C),
     ),

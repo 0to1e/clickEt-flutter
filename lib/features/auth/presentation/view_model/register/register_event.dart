@@ -25,7 +25,8 @@ class RegisterUser extends RegisterEvent {
   });
 
   @override
-  List<Object> get props => [context, fullName, username, email, phone, password];
+  List<Object> get props =>
+      [context, fullName, username, email, phone, password];
 }
 
 class TogglePasswordVisibilityEvent extends RegisterEvent {
@@ -42,4 +43,14 @@ class NavigateToLoginEvent extends RegisterEvent {
 
   @override
   List<Object> get props => [context];
+}
+
+class UploadImageEvent extends RegisterEvent {
+  final File image;
+  final BuildContext context;
+
+  const UploadImageEvent({required this.image, required this.context});
+
+  @override
+  List<Object> get props => [image, context];
 }

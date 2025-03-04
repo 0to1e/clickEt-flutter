@@ -4,7 +4,7 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
 
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:ClickEt/app/constants/api_constants.dart';
+import 'package:ClickEt/app/constants/api_endpoints.dart';
 import 'package:ClickEt/core/network/dio_response_interceptor.dart';
 
 class ApiService {
