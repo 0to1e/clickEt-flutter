@@ -7,7 +7,7 @@ import 'package:ClickEt/features/auth/domain/entity/auth_entity.dart';
 
 part 'auth_hive_model.g.dart';
 
-@HiveType(typeId: HiveTableConstant.studentTableId)
+@HiveType(typeId: HiveTableConstant.userTableId)
 class AuthHiveModel extends Equatable {
   @HiveField(0)
   final String? userId;
