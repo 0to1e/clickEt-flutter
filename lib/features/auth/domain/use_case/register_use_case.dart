@@ -28,6 +28,22 @@ class RegisterUserParams extends Equatable {
         phoneNumber = "",
         password = "";
 
+  RegisterUserParams copyWith({
+    String? fullName,
+    String? userName,
+    String? email,
+    String? phoneNumber,
+    String? password,
+  }) {
+    return RegisterUserParams(
+      fullName: fullName ?? this.fullName,
+      userName: userName ?? this.userName,
+      email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      password: password ?? this.password,
+    );
+  }
+
   @override
   List<Object?> get props => [fullName, userName, email, phoneNumber, password];
 }

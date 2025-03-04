@@ -39,7 +39,6 @@ class LoginUseCase implements UsecaseWithParams<String, LoginParams> {
         (token) {
           tokenSharedPrefs.saveToken(token);
           tokenSharedPrefs.getToken().then((value) {
-            print(value);
           });
           return Right(token);
         },
