@@ -16,8 +16,10 @@ class ApiEndpoints {
   // ====================== Auth Routes ======================
   static const String register = "auth/register";
   static const String login = "auth/login";
-  // static const String imageUrl = "http://10.0.2.2:3000/uploads/";
-  // static const String uploadImage = "auth/uploadImage";
+  static const String logout = "auth/logout";
+  static const String getUser = "auth/user/status";
+  static const String deleteUser = "auth/delete";
+  static const String uploadImage = "auth/user/upload";
 
   // ====================== Movie Routes ======================
   static const String getShowingMovies = "movie/status/showing";
@@ -25,4 +27,10 @@ class ApiEndpoints {
 
   // ====================== Screening Routes ======================
   static const String getScreeningbyMovie = "screening/byMovie/";
+  
+  // ====================== Seat Routes ======================
+  static const String layoutByScreening = "screening/getLayoutById";
+  static const String holdSeats = "booking/hold";
+  static const String releaseHold = "booking/hold/release";
+  static const String confirmBooking = "booking/confirm";
 }
