@@ -8,7 +8,7 @@ import 'package:ClickEt/app/di/di.dart';
 import 'package:ClickEt/core/navigation/global_navigator.dart'; // Import your global navigator
 
 class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class App extends StatelessWidget {
       child: BlocBuilder<ThemeCubit, bool>(
         builder: (context, isDarkMode) {
           return MaterialApp(
-            navigatorKey: globalNavigatorKey, // <-- Added here
+            navigatorKey: globalNavigatorKey,
             debugShowCheckedModeBanner: false,
             title: 'ClickEt',
             theme: AppTheme.getApplicationTheme(isDarkMode: false),

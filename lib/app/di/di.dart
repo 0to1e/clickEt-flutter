@@ -12,6 +12,11 @@ import 'package:ClickEt/features/movie/domain/use_case/cache_movies_use_case.dar
 import 'package:ClickEt/features/movie/domain/use_case/get_showing_use_case.dart';
 import 'package:ClickEt/features/movie/domain/use_case/get_upcoming_use_case.dart';
 import 'package:ClickEt/features/movie/presentation/view_model/movie_bloc.dart';
+import 'package:ClickEt/features/screenig/data/data_source/remote_data_source/screening_remote_data_source.dart';
+import 'package:ClickEt/features/screenig/data/repository/screening_remote_repository.dart';
+import 'package:ClickEt/features/screenig/domain/repository/screening_repository.dart';
+import 'package:ClickEt/features/screenig/domain/usecase/get_screening_by_movie_usecase.dart';
+import 'package:ClickEt/features/screenig/presentation/view_model/screening_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
@@ -43,6 +48,7 @@ Future<void> initDependencies() async {
     await _iniitAuthDependencies();
     await _initHomeDependencies();
     await _initMovieDependencies();
+    await _initScreeningDependencies();
   } catch (e) {
     logger.e("Error initializing dependencies: $e");
   }
@@ -171,4 +177,24 @@ Future<void> _initMovieDependencies() async {
       () => GetShowingMoviesUseCase(getIt<MovieRepository>()));
   getIt.registerLazySingleton<GetUpcomingMoviesUseCase>(
       () => GetUpcomingMoviesUseCase(getIt<MovieRepository>()));
+}
+
+Future<void> _initScreeningDependencies() async {
+  getIt.registerLazySingleton<ScreeningRemoteDataSource>(
+    () => ScreeningRemoteDataSource(getIt<Dio>()),
+  );
+
+  getIt.registerLazySingleton<IScreeningRepository>(
+    () => ScreeningRemoteRepository(getIt<ScreeningRemoteDataSource>()),
+  );
+
+  getIt.registerLazySingleton<GetScreeningsByMovieUseCase>(
+    () => GetScreeningsByMovieUseCase(getIt<IScreeningRepository>()),
+  );
+
+  getIt.registerFactory<ScreeningBloc>(
+  () => ScreeningBloc(
+    getScreeningsByMovieUseCase: getIt<GetScreeningsByMovieUseCase>(),
+  ),
+);
 }

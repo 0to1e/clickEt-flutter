@@ -1,4 +1,3 @@
-// import 'package:ClickEt/app/app.dart';
 import 'package:ClickEt/app/app.dart';
 import 'package:ClickEt/app/di/di.dart';
 import 'package:ClickEt/core/sensor/shake_cubit.dart';
