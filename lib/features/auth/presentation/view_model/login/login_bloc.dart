@@ -1,5 +1,5 @@
 import 'package:ClickEt/app/di/di.dart';
-import 'package:ClickEt/common/main_screen.dart';
+import 'package:ClickEt/common/widgets/main_screen.dart';
 import 'package:ClickEt/features/auth/presentation/view/registration_view.dart';
 import 'package:ClickEt/features/auth/presentation/view_model/register/register_bloc.dart';
 import 'package:equatable/equatable.dart';
