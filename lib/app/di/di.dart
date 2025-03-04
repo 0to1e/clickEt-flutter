@@ -1,7 +1,16 @@
-import 'package:ClickEt/app/shared_prefs/token_shared_prefs.dart';
 import 'package:ClickEt/core/network/api_service.dart';
 import 'package:ClickEt/features/auth/data/data_source/remote_data_source/auth_remote_data_source.dart';
 import 'package:ClickEt/features/auth/data/repository/auth_remote_repository.dart';
+import 'package:ClickEt/features/movie/data/data_source/local_data_source/movie_local_data_source.dart';
+import 'package:ClickEt/features/movie/data/data_source/remote_data_source/movie_remote_data_source.dart';
+import 'package:ClickEt/features/movie/data/repository/hybrid_movie_repository.dart';
+import 'package:ClickEt/features/movie/data/repository/movie_local_repository.dart';
+import 'package:ClickEt/features/movie/data/repository/movie_remote_repository.dart';
+import 'package:ClickEt/features/movie/domain/use_case/cache_movies_use_case.dart';
+import 'package:ClickEt/features/movie/domain/use_case/get_showing_use_case.dart';
+import 'package:ClickEt/features/movie/domain/use_case/get_upcoming_use_case.dart';
+import 'package:ClickEt/features/movie/presentation/view_model/movie_bloc.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ClickEt/features/auth/data/data_source/local_data_source/auth_local_data_source.dart';
@@ -16,34 +25,33 @@ import 'package:ClickEt/features/splash/presentation/view_model/splash_cubit.dar
 import 'package:ClickEt/features/home/presentation/view_model/home_bloc.dart';
 import 'package:ClickEt/network/hive_service.dart';
 import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
 final logger = Logger();
 
 Future<void> initDependencies() async {
   try {
-    // Initialize Hive service
     await _initHiveService();
     await _initApiService();
-
-    await _initSharedPreferences();
-    await _initSharedPrefs();
-    // Initialize data sources and repositories
-    _initAuthDataSourcesAndRepositories();
-
-    // Initialize use cases
-    _initUseCases();
-
-    // Initialize BLoCs and Cubits
-    _initBlocsAndCubits();
+    await _initConnectivityService();
+    await _initSplashDependencies();
+    await _initOnboardingDependencies();
+    await _initGetStartedDependencies();
+    await _iniitAuthDependencies();
+    await _initHomeDependencies();
+    await _initMovieDependencies();
   } catch (e) {
     logger.e("Error initializing dependencies: $e");
   }
 }
 
 Future<void> _initHiveService() async {
+  await HiveService.init();
   getIt.registerLazySingleton<HiveService>(() => HiveService());
+}
+
+Future<void> _initConnectivityService() async {
+  getIt.registerLazySingleton<Connectivity>(() => Connectivity());
 }
 
 Future<void> _initApiService() async {
@@ -53,12 +61,8 @@ Future<void> _initApiService() async {
   );
 }
 
-Future<void> _initSharedPreferences() async {
-  final sharedPreferences = await SharedPreferences.getInstance();
-  getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-}
-
-void _initAuthDataSourcesAndRepositories() {
+Future<void> _iniitAuthDependencies() async {
+  // ====================================================** Data Sources
   getIt.registerLazySingleton<AuthLocalDataSource>(
     () => AuthLocalDataSource(getIt<HiveService>()),
   );
@@ -66,62 +70,97 @@ void _initAuthDataSourcesAndRepositories() {
     () => AuthRemoteDataSource(getIt<Dio>()),
   );
 
+  // ====================================================** Data Repository
+
   getIt.registerLazySingleton<AuthLocalRepository>(
     () => AuthLocalRepository(getIt<AuthLocalDataSource>()),
   );
   getIt.registerLazySingleton<AuthRemoteRepository>(
     () => AuthRemoteRepository(getIt<AuthRemoteDataSource>()),
   );
-}
 
-void _initUseCases() {
-  getIt.registerLazySingleton<LoginUseCase>(
-    () => LoginUseCase(
-      getIt<AuthRemoteRepository>(),
-      getIt<TokenSharedPrefs>(),
-    ),
-  );
+  // ====================================================** Use Cases
 
   getIt.registerLazySingleton<RegisterUseCase>(
     () => RegisterUseCase(getIt<AuthRemoteRepository>()),
   );
-}
-
-Future<void> _initSharedPrefs() async {
-  getIt.registerLazySingleton<TokenSharedPrefs>(
-    () => TokenSharedPrefs(getIt<SharedPreferences>()),
-  );
-}
-
-void _initBlocsAndCubits() {
-  // Register SplashCubit
-  getIt.registerFactory<SplashCubit>(
-    () => SplashCubit(getIt<OnboardingCubit>()),
+  getIt.registerLazySingleton<LoginUseCase>(
+    () => LoginUseCase(
+      getIt<AuthRemoteRepository>(),
+    ),
   );
 
-  // Register OnboardingCubit
-  getIt.registerFactory<OnboardingCubit>(
-    () => OnboardingCubit(),
-  );
+  // ====================================================** Bloc/Cubits
 
-  // Register GetStartedCubit with its dependencies
-  getIt.registerFactory<GetStartedCubit>(
-    () => GetStartedCubit(),
-  );
-
-  // Register LoginBloc as a factory instead of singleton
   getIt.registerFactory<LoginBloc>(
-    () => LoginBloc(loginUseCase: getIt<LoginUseCase>()),
+    () => LoginBloc(
+        loginUseCase: getIt<LoginUseCase>(),
+        movieBloc: getIt<MovieBloc>(),
+        hiveService: getIt<HiveService>()),
   );
 
-  // Register RegisterBloc as a factory instead of singleton
   getIt.registerFactory<RegisterBloc>(
     () => RegisterBloc(
       registerUseCase: getIt<RegisterUseCase>(),
     ),
   );
-  // Register HomeBloc
+}
+
+Future<void> _initSplashDependencies() async {
+  getIt.registerFactory<SplashCubit>(
+    () => SplashCubit(getIt<OnboardingCubit>()),
+  );
+}
+
+Future<void> _initOnboardingDependencies() async {
+  getIt.registerFactory<OnboardingCubit>(
+    () => OnboardingCubit(getIt<GetStartedCubit>()),
+  );
+}
+
+Future<void> _initGetStartedDependencies() async {
+  getIt.registerFactory<GetStartedCubit>(
+    () => GetStartedCubit(
+        getIt<LoginBloc>(), getIt<RegisterBloc>(), getIt<HomeBloc>()),
+  );
+}
+
+Future<void> _initHomeDependencies() async {
   getIt.registerFactory<HomeBloc>(
     () => HomeBloc(),
   );
+}
+
+Future<void> _initMovieDependencies() async {
+  getIt.registerLazySingleton<MovieRepository>(
+    () => MovieRepository(getIt<RemoteMovieRepository>(),
+        getIt<LocalMovieRepository>(), getIt<Connectivity>()),
+  );
+  getIt.registerLazySingleton<RemoteMovieRepository>(
+    () => RemoteMovieRepository(getIt<RemoteMovieDataSource>()),
+  );
+  getIt.registerLazySingleton<LocalMovieRepository>(
+    () => LocalMovieRepository(getIt<LocalMovieDataSource>()),
+  );
+
+  getIt.registerLazySingleton<RemoteMovieDataSource>(
+      () => RemoteMovieDataSource(getIt<Dio>()));
+
+  getIt.registerLazySingleton<LocalMovieDataSource>(
+      () => LocalMovieDataSource(getIt<HiveService>()));
+  getIt.registerLazySingleton<CacheMoviesUseCase>(
+    () => CacheMoviesUseCase(getIt<LocalMovieDataSource>()),
+  );
+  getIt.registerFactory<MovieBloc>(
+    () => MovieBloc(
+        getUpcomingMoviesUseCase: getIt<GetUpcomingMoviesUseCase>(),
+        getShowingMoviesUseCase: getIt<GetShowingMoviesUseCase>(),
+        cacheMoviesUseCase: getIt<CacheMoviesUseCase>(),
+        connectivity: getIt<Connectivity>()),
+  );
+
+  getIt.registerLazySingleton<GetShowingMoviesUseCase>(
+      () => GetShowingMoviesUseCase(getIt<MovieRepository>()));
+  getIt.registerLazySingleton<GetUpcomingMoviesUseCase>(
+      () => GetUpcomingMoviesUseCase(getIt<MovieRepository>()));
 }

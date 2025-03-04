@@ -13,7 +13,9 @@ class ApiEndpoints {
   static const String uploadProfile = "auth/user/upload";
   // static const String uploadImage = "auth/uploadImage";
 
-  // ====================== <> Routes ======================
+    // ====================== Movie Routes ======================
+  static const String getShowingMovies = "movie/status/showing";
+  static const String getUpcomingMovies = "movie/status/upcoming";
 
 
   // ====================== <> Routes ======================

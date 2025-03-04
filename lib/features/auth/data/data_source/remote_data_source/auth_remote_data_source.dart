@@ -42,7 +42,7 @@ class AuthRemoteDataSource implements IAuthDataSource {
   }
 
 @override
-  Future<String> loginUser(String username, String password) async {
+  Future<Response> loginUser(String username, String password) async {
     try {
       Response response = await _dio.post(
         ApiEndpoints.login,
@@ -53,8 +53,8 @@ class AuthRemoteDataSource implements IAuthDataSource {
       );
 
       if (response.statusCode == 200) {
-        final str = response.data['accessToken'];
-        return str;
+       
+        return response;
       } else {
         throw Exception(response.statusMessage);
       }

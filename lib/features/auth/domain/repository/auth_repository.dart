@@ -7,7 +7,7 @@ import 'package:ClickEt/features/auth/domain/entity/auth_entity.dart';
 abstract interface class IAuthRepository {
   Future<Either<Failure, void>> registerUser(AuthEntity user);
 
-  Future<Either<Failure, String>> loginUser(
+  Future<Either<Failure, dynamic>> loginUser(
       String username, String password);
 
   Future<Either<Failure, String>> uploadProfilePicture(File file);

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:ClickEt/app/di/di.dart';
 import 'package:ClickEt/common/button.dart';
 import 'package:ClickEt/features/get_started/presentation/view_model/get_started_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GetStartedView extends StatelessWidget {
   const GetStartedView({super.key});
@@ -44,14 +44,16 @@ class GetStartedView extends StatelessWidget {
                 children: [
                   Button(
                     onPressed: () {
-                      getIt<GetStartedCubit>().navigateToLogin(context);
+                      context.read<GetStartedCubit>().navigateToLogin(context);
                     },
                     text: 'Sign In',
                   ),
                   const SizedBox(height: 16.0),
                   Button(
                     onPressed: () {
-                      getIt<GetStartedCubit>().navigateToRegistration(context);
+                      context
+                          .read<GetStartedCubit>()
+                          .navigateToRegistration(context);
                     },
                     backgroundColor: Colors.transparent,
                     textColor: Theme.of(context).colorScheme.primary,
