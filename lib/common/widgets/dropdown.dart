@@ -29,7 +29,7 @@ class CustomDropdown<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final dropdownBackgroundColor =
-        backgroundColor ?? theme.colorScheme.primary.withOpacity(0.8);
+        backgroundColor ?? theme.colorScheme.primary.withAlpha(80);
 
     // Define text style once to reuse
     final textStyle = GoogleFonts.lexend(

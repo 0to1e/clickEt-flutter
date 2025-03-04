@@ -33,7 +33,6 @@ class AuthLocalDataSource implements IAuthDataSource {
   @override
   Future<void> registerUser(AuthEntity user) async {
     try {
-      // Convert AuthEntity to AuthHiveModel
       final authHiveModel = AuthHiveModel.fromEntity(user);
 
       await _hiveService.register(authHiveModel);
@@ -50,19 +49,16 @@ class AuthLocalDataSource implements IAuthDataSource {
 
   @override
   Future<void> deleteUser(String username) {
-    // TODO: implement deleteUser
     throw UnimplementedError();
   }
 
   @override
   Future<AuthEntity> getUserStatus() {
-    // TODO: implement getUserStatus
     throw UnimplementedError();
   }
 
   @override
   Future<void> logout() {
-    // TODO: implement logout
     throw UnimplementedError();
   }
 }
