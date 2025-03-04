@@ -15,6 +15,10 @@ class MovieDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final DateTime parsedDate = DateTime.parse(movie.releaseDate);
+
+    // Format the DateTime
+    final String formattedDate = DateFormat('d MMMM, y').format(parsedDate);
     return BlocProvider(
       create: (context) =>
           getIt<ScreeningBloc>()..add(FetchScreeningsEvent(movie.id)),
@@ -33,32 +37,64 @@ class MovieDetailsView extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               // Movie Details
-              Row(
-                children: [
-                  Image.network(
-                    movie.posterSmallUrl,
-                    width: 80,
-                    height: 120,
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Category: ${movie.category}'),
-                        Text('Release: ${movie.releaseDate}'),
-                        Text('Duration: ${movie.durationMin} minutes'),
-                        Text('Language: ${movie.language}'),
-                      ],
+              Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Row(
+                  children: [
+                    Image.network(
+                      movie.posterSmallUrl,
+                      width: 100,
+                      height: 140,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Category: ${movie.category}',
+                            style: const TextStyle(fontSize: 17),
+                          ),
+                          Text(
+                            'Release: $formattedDate',
+                            style: const TextStyle(fontSize: 17),
+                          ),
+                          Text(
+                            'Duration: ${movie.durationMin} minutes',
+                            style: const TextStyle(fontSize: 17),
+                          ),
+                          Text(
+                            'Language: ${movie.language}',
+                            style: const TextStyle(fontSize: 17),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 16),
               // Description
-              Text(
-                'Description:\n${movie.description}',
-                style: const TextStyle(fontSize: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10, bottom: 10),
+                      child: Text(
+                        "Synopsis",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
+                    ),
+                    Text(
+                      movie.description,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 16),
               // Dynamic Date Tiles
@@ -69,7 +105,16 @@ class MovieDetailsView extends StatelessWidget {
                     return Text('Error: ${state.errorMessage}');
                   }
                   if (state.screenings.isEmpty) {
-                    return const Text('No screenings available');
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 30),
+                      child: Text(
+                        'No screenings available',
+                        style: TextStyle(
+                            fontSize: 23,
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    );
                   }
 
                   final dates = state.screenings
@@ -101,7 +146,7 @@ class MovieDetailsView extends StatelessWidget {
                                   vertical: 16, horizontal: 24),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.primary,
                                   width: 1,
                                 ),
                                 borderRadius: BorderRadius.circular(5),
@@ -113,17 +158,29 @@ class MovieDetailsView extends StatelessWidget {
                                 children: [
                                   Text(
                                     day,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      color: isSelected
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
                                     ),
                                   ),
                                   Text(
                                     month,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 16,
-                                      color: Colors.white,
+                                      color: isSelected
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
                                     ),
                                   ),
                                 ],
@@ -136,7 +193,6 @@ class MovieDetailsView extends StatelessWidget {
                   );
                 },
               ),
-
               const SizedBox(height: 16),
 
               // Theatre Dropdown
@@ -182,6 +238,7 @@ class MovieDetailsView extends StatelessWidget {
               const SizedBox(height: 8),
 
               // Time Selection (Horizontal Buttons)
+// Time Selection (Horizontal Buttons)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: BlocBuilder<ScreeningBloc, ScreeningState>(
@@ -232,7 +289,7 @@ class MovieDetailsView extends StatelessWidget {
                                   vertical: 12, horizontal: 20),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.primary,
                                   width: 1,
                                 ),
                                 borderRadius: BorderRadius.circular(5),
@@ -242,9 +299,11 @@ class MovieDetailsView extends StatelessWidget {
                               ),
                               child: Text(
                                 timeInfo['display']!,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 18,
-                                  color: Colors.white,
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : Theme.of(context).colorScheme.onSurface,
                                 ),
                               ),
                             ),
@@ -255,7 +314,6 @@ class MovieDetailsView extends StatelessWidget {
                   },
                 ),
               ),
-
               const SizedBox(height: 16),
 
               // Hall Dropdown

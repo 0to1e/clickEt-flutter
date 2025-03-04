@@ -26,7 +26,7 @@ class MainScreen extends StatelessWidget {
               body = const BookingsView();
               break;
             case 2:
-              body = const MeView();
+              body = const ProfileView();
               break;
             default:
               body = const HomeView();
