@@ -3,6 +3,11 @@ import 'package:ClickEt/core/network/api_service.dart';
 import 'package:ClickEt/core/sensor/shake_cubit.dart';
 import 'package:ClickEt/features/auth/data/data_source/remote_data_source/auth_remote_data_source.dart';
 import 'package:ClickEt/features/auth/data/repository/auth_remote_repository.dart';
+import 'package:ClickEt/features/auth/presentation/view_model/profile/profile_bloc.dart';
+import 'package:ClickEt/features/bookings/data/data_source/remote_data_source/booking_remote_data_source.dart';
+import 'package:ClickEt/features/bookings/data/repository/booking_remote_repository.dart';
+import 'package:ClickEt/features/bookings/domain/usecase/get_history_use_case.dart';
+import 'package:ClickEt/features/bookings/presentation/view_model/booking_history_bloc.dart';
 import 'package:ClickEt/features/movie/data/data_source/local_data_source/movie_local_data_source.dart';
 import 'package:ClickEt/features/movie/data/data_source/remote_data_source/movie_remote_data_source.dart';
 import 'package:ClickEt/features/movie/data/repository/hybrid_movie_repository.dart';
@@ -28,6 +33,7 @@ import 'package:ClickEt/features/seats/domain/use_case/release_hold_use_case.dar
 import 'package:ClickEt/features/seats/presentation/view_model/seat_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ClickEt/features/auth/data/data_source/local_data_source/auth_local_data_source.dart';
 import 'package:ClickEt/features/auth/data/repository/auth_local_repository.dart';
@@ -51,6 +57,7 @@ Future<void> initDependencies() async {
     await _initHiveService();
     await _initApiService();
     await _initConnectivityService();
+    await _initDownloaderDependencies();
     await _initSplashDependencies();
     await _initOnboardingDependencies();
     await _initGetStartedDependencies();
@@ -59,6 +66,8 @@ Future<void> initDependencies() async {
     await _initMovieDependencies();
     await _initScreeningDependencies();
     await _initSeatDependencies();
+    await _initProfileDependencies();
+    await _initBookingHistoryDependencies();
   } catch (e) {
     logger.e("Error initializing dependencies: $e");
   }
@@ -79,11 +88,19 @@ Future<void> _initConnectivityService() async {
 }
 
 Future<void> _initApiService() async {
-  // Remote Data Source
+  getIt.registerLazySingleton<ApiService>(() => ApiService(Dio()));
   getIt.registerLazySingleton<Dio>(
     () => ApiService(Dio()).dio,
   );
 }
+
+Future<void> _initDownloaderDependencies() async {
+  await FlutterDownloader.initialize(
+    debug: true,
+    ignoreSsl: false,
+  );
+}
+
 
 Future<void> _iniitAuthDependencies() async {
   // ====================================================** Data Sources
@@ -209,6 +226,12 @@ Future<void> _initScreeningDependencies() async {
   );
 }
 
+Future<void> _initProfileDependencies() async {
+  getIt.registerFactory<ProfileBloc>(
+    () => ProfileBloc(authRepository: getIt<AuthRemoteRepository>()),
+  );
+}
+
 Future<void> _initSeatDependencies() async {
   // Register Data Source
   getIt.registerLazySingleton<ISeatDataSource>(
@@ -241,6 +264,30 @@ Future<void> _initSeatDependencies() async {
       holdSeatsUseCase: getIt<HoldSeatsUseCase>(),
       releaseHoldUseCase: getIt<ReleaseHoldUseCase>(),
       confirmBookingUseCase: getIt<ConfirmBookingUseCase>(),
+    ),
+  );
+}
+
+Future<void> _initBookingHistoryDependencies() async {
+  // Data Source
+  getIt.registerLazySingleton<BookingRemoteDataSource>(
+    () => BookingRemoteDataSource(getIt<Dio>()),
+  );
+
+  // Repository
+  getIt.registerLazySingleton<BookingRepository>(
+    () => BookingRepository(getIt<BookingRemoteDataSource>()),
+  );
+
+  // Use Case
+  getIt.registerLazySingleton<GetBookingHistoryUseCase>(
+    () => GetBookingHistoryUseCase(getIt<BookingRepository>()),
+  );
+
+  // Register BookingBloc
+  getIt.registerFactory<BookingBloc>(
+    () => BookingBloc(
+      getIt<GetBookingHistoryUseCase>(),
     ),
   );
 }
