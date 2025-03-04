@@ -59,6 +59,10 @@ dependencies:
   khalti_checkout_flutter: ^1.0.0-dev.8
   intl: ^0.20.2
   image_picker: ^1.1.2
+  permission_handler: ^11.4.0
+  open_file: ^3.5.10
+  flutter_downloader: ^1.12.0
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:
