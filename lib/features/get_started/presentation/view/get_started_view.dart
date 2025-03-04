@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:ClickEt/common/button.dart';
+import 'package:ClickEt/common/widgets/button.dart';
 import 'package:ClickEt/features/get_started/presentation/view_model/get_started_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
