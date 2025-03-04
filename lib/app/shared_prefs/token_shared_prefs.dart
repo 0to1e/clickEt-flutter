@@ -24,4 +24,8 @@ class TokenSharedPrefs {
       return Left(SharedPrefsFailure(message: e.toString()));
     }
   }
+
+  Future<void> clearToken() async {
+    await _sharedPreferences.remove('token');
+  }
 }

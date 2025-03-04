@@ -28,6 +28,35 @@ class AuthEntity extends Equatable {
     this.refreshToken,
     this.refreshTokenExpiry,
   });
+  AuthEntity copyWith({
+    String? userId,
+    String? fullName,
+    String? userName,
+    String? profileURL,
+    String? phoneNumber,
+    String? email,
+    String? password,
+    String? role,
+    String? passwordResetToken,
+    DateTime? passwordResetExpiry,
+    String? refreshToken,
+    DateTime? refreshTokenExpiry,
+  }) {
+    return AuthEntity(
+      userId: userId ?? this.userId,
+      fullName: fullName ?? this.fullName,
+      userName: userName ?? this.userName,
+      profileURL: profileURL ?? this.profileURL,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      email: email ?? this.email,
+      password: password ?? this.password,
+      role: role ?? this.role,
+      passwordResetToken: passwordResetToken ?? this.passwordResetToken,
+      passwordResetExpiry: passwordResetExpiry ?? this.passwordResetExpiry,
+      refreshToken: refreshToken ?? this.refreshToken,
+      refreshTokenExpiry: refreshTokenExpiry ?? this.refreshTokenExpiry,
+    );
+  }
 
   const AuthEntity.empty()
       : userId = "",

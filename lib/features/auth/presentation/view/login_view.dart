@@ -2,7 +2,7 @@ import 'package:ClickEt/app/di/di.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ClickEt/features/auth/presentation/view_model/login/login_bloc.dart';
-import 'package:ClickEt/common/button.dart';
+import 'package:ClickEt/common/widgets/button.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});

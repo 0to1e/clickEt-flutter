@@ -8,43 +8,49 @@ part 'auth_api_model.g.dart';
 class AuthApiModel extends Equatable {
   @JsonKey(name: '_id')
   final String? id;
+  @JsonKey(name: 'full_name')
   final String fullName;
+  @JsonKey(name: 'user_name')
   final String userName;
-  final String email;
-  final String phoneNumber;
-  final String password;
-  final String ?role;
-  @JsonKey(name: 'password_reset_token')
-  final String ?passwordResetToken;
-  @JsonKey(name: 'password_reset_expiry')
-  final DateTime ?passwordResetExpiry;
-  @JsonKey(name: 'refresh_token')
-  final String ?refreshToken;
-  @JsonKey(name: 'refresh_token_expiry')
-  final DateTime ?refreshTokenExpiry;
   @JsonKey(name: 'profile_URL')
-  final String ?profileURL;
+  final String? profileURL;
+  @JsonKey(name: 'phone_number')
+  final String? phoneNumber; // Made optional
+  final String email;
+  @JsonKey(includeIfNull: false) // Exclude if null/missing
+  final String? password;      // Made optional
+  final String? role;
+  @JsonKey(name: 'password_reset_token')
+  final String? passwordResetToken;
+  @JsonKey(name: 'password_reset_expiry')
+  final DateTime? passwordResetExpiry;
+  @JsonKey(name: 'refresh_token')
+  final String? refreshToken;
+  @JsonKey(name: 'refresh_token_expiry')
+  final DateTime? refreshTokenExpiry;
+  @JsonKey(name: 'createdAt')
   final DateTime? createdAt;
+  @JsonKey(name: 'updatedAt')
   final DateTime? updatedAt;
   @JsonKey(name: '__v')
-  final int ?version;
+  final int? version;
 
   const AuthApiModel({
     this.id,
     required this.fullName,
     required this.userName,
+    this.profileURL,
+    this.phoneNumber, // Optional
     required this.email,
-    required this.phoneNumber,
-    required this.password,
+    this.password,    // Optional
     this.role,
     this.passwordResetToken,
     this.passwordResetExpiry,
     this.refreshToken,
     this.refreshTokenExpiry,
-    this.profileURL,
     this.createdAt,
     this.updatedAt,
-    this.version
+    this.version,
   });
 
   factory AuthApiModel.fromJson(Map<String, dynamic> json) =>
@@ -57,26 +63,15 @@ class AuthApiModel extends Equatable {
       userId: id,
       fullName: fullName,
       userName: userName,
+      profileURL: profileURL,
+      phoneNumber: phoneNumber ?? '', // Default to empty string if null
       email: email,
-      phoneNumber: phoneNumber,
-      password: password,
+      password: password ?? '',       // Default to empty string if null
       role: role,
       passwordResetToken: passwordResetToken,
       passwordResetExpiry: passwordResetExpiry,
       refreshToken: refreshToken,
       refreshTokenExpiry: refreshTokenExpiry,
-      profileURL: profileURL,
-    );
-  }
-
-  // From Entity
-  factory AuthApiModel.fromEntity(AuthEntity entity) {
-    return AuthApiModel(
-      fullName: entity.fullName,
-      userName: entity.userName,
-      email: entity.email,
-      phoneNumber: entity.phoneNumber,
-      password: entity.password,
     );
   }
 
@@ -85,8 +80,9 @@ class AuthApiModel extends Equatable {
         id,
         fullName,
         userName,
-        email,
+        profileURL,
         phoneNumber,
+        email,
         password,
         role,
         passwordResetToken,
@@ -96,6 +92,5 @@ class AuthApiModel extends Equatable {
         createdAt,
         updatedAt,
         version,
-        profileURL,
       ];
 }

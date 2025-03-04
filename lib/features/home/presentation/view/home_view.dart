@@ -1,4 +1,4 @@
-import 'package:ClickEt/common/carousel_widget.dart';
+import 'package:ClickEt/common/widgets/carousel_widget.dart';
 import 'package:ClickEt/features/movie/presentation/view_model/movie_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

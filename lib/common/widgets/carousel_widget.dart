@@ -1,8 +1,8 @@
-import 'package:ClickEt/common/movie_details_view.dart';
+import 'package:ClickEt/common/widgets/movie_details_view.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:ClickEt/features/movie/domain/entity/movie_entity.dart';
-import 'package:ClickEt/common/movie_card.dart';
+import 'package:ClickEt/common/widgets/movie_card.dart';
 
 class MovieCarousel extends StatefulWidget {
   final List<MovieEntity> movies;
