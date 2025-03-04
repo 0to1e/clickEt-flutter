@@ -1,4 +1,4 @@
-import 'package:ClickEt/common/button.dart';
+import 'package:ClickEt/common/widgets/button.dart';
 import 'package:ClickEt/features/onboarding/presentation/view/on_board_model.dart';
 import 'package:ClickEt/features/onboarding/presentation/view_model/onboarding_cubit.dart';
 import 'package:flutter/material.dart';

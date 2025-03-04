@@ -1,8 +1,9 @@
-import 'package:ClickEt/features/seats/domain/entity/seat_entity.dart';
-import 'package:ClickEt/features/seats/presentation/view_model/seat_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ClickEt/common/widgets/button.dart';
 import 'package:ClickEt/app/di/di.dart';
+import 'package:ClickEt/features/seats/presentation/view_model/seat_bloc.dart';
+import 'package:ClickEt/features/seats/domain/entity/seat_entity.dart';
 
 class SeatSelectionView extends StatelessWidget {
   final String screeningId;
@@ -17,43 +18,39 @@ class SeatSelectionView extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Choose Seat'),
-          backgroundColor: Colors.red,
         ),
-        backgroundColor: Colors.black,
         body: BlocBuilder<SeatBloc, SeatState>(
           builder: (context, state) {
             if (state.isLoading) {
-              return const Center(
-                  child: CircularProgressIndicator(color: Colors.red));
+              return const Center(child: CircularProgressIndicator());
             }
             if (state.errorMessage.isNotEmpty) {
-              return Center(
-                  child: Text(state.errorMessage,
-                      style: const TextStyle(color: Colors.white)));
+              return Center(child: Text(state.errorMessage));
             }
             if (state.seatLayout == null) {
-              return const Center(
-                  child: Text('No seat layout available',
-                      style: TextStyle(color: Colors.white)));
+              return const Center(child: Text('No seat layout available'));
             }
-
             return Padding(
               padding: const EdgeInsets.only(top: 16.0),
               child: Column(
                 children: [
                   // Cinema Screen Banner
-                  Container(
-                    color: Colors.red,
-                    height: 50,
-                    width: double.infinity,
-                    child: const Center(
-                      child: Text('Cinema Screen',
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: Container(
+                      color: Theme.of(context).colorScheme.primary,
+                      height: 50,
+                      width: double.infinity,
+                      child: const Center(
+                        child: Text(
+                          'Cinema Screen',
                           style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
+                              fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                      ),
                     ),
                   ),
-                  // Scrollable Seat Grid
+                  // Scrollable Seat Grid and Legend
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
@@ -65,11 +62,17 @@ class SeatSelectionView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Theater Details, Selected Seats, and Actions
-                  _buildTheaterDetailsAndActions(context, state),
                 ],
               ),
             );
+          },
+        ),
+        // The green container is now pinned at the bottom using bottomNavigationBar.
+        bottomNavigationBar: BlocBuilder<SeatBloc, SeatState>(
+          builder: (context, state) {
+            // Optionally, show nothing if no seat layout is available.
+            if (state.seatLayout == null) return const SizedBox.shrink();
+            return _buildTheaterDetailsAndActions(context, state);
           },
         ),
       ),
@@ -83,6 +86,7 @@ class SeatSelectionView extends StatelessWidget {
         (max, section) =>
             section.rows.length > max ? section.rows.length : max);
 
+    // Calculate starting seat number for each section
     List<int> sectionStartNumbers = [];
     int cumulativeSeats = 0;
     for (var section in seatGrid) {
@@ -94,8 +98,12 @@ class SeatSelectionView extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white),
+        border: Border.all(),
+        borderRadius: BorderRadius.circular(8.0),
+        color: Theme.of(context).colorScheme.primary.withAlpha(35),
       ),
+      margin: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Column(
@@ -108,8 +116,7 @@ class SeatSelectionView extends StatelessWidget {
                   alignment: Alignment.center,
                   child: Text(
                     String.fromCharCode(65 + rowIndex),
-                    style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
                 ...List.generate(seatGrid.length, (sectionIndex) {
@@ -117,7 +124,6 @@ class SeatSelectionView extends StatelessWidget {
                   if (rowIndex >= section.rows.length) {
                     return const SizedBox(width: 0);
                   }
-
                   final row = section.rows[rowIndex];
                   final startNumber = sectionStartNumbers[sectionIndex];
                   final seats = List<Widget>.generate(row.length, (colIndex) {
@@ -134,27 +140,35 @@ class SeatSelectionView extends StatelessWidget {
                         margin: const EdgeInsets.all(4),
                         width: 30,
                         height: 30,
-                        decoration: BoxDecoration(
-                          color: _getSeatColor(status),
-                          shape: BoxShape.rectangle,
-                          border: Border.all(color: Colors.white),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '$seatNumber',
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 12),
-                          ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Icon(
+                              Icons.event_seat,
+                              color: _getSeatColor(status),
+                              size: 30,
+                            ),
+                            Text(
+                              '$seatNumber',
+                              style: TextStyle(
+                                color: status == 'selected'
+                                    ? Colors.black
+                                    : Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
                   });
 
-                  // Add gap between sections (except after the last one)
+                  // Add gap between sections except after the last one
                   if (sectionIndex < seatGrid.length - 1) {
                     return Row(children: [
                       ...seats,
-                      const SizedBox(width: 30), // 20px gap
+                      const SizedBox(width: 20),
                     ]);
                   } else {
                     return Row(children: seats);
@@ -178,132 +192,220 @@ class SeatSelectionView extends StatelessWidget {
       case 'r':
         return 'reserved';
       default:
-        return 'available'; // Fallback
+        return 'available';
     }
   }
 
   Color _getSeatColor(String status) {
     switch (status) {
       case 'available':
-        return Colors.grey;
+        return Colors.grey.shade700;
       case 'hold':
-        return Colors.yellow;
+        return Colors.amber;
       case 'reserved':
         return Colors.red;
       case 'selected':
         return Colors.green;
       default:
-        return Colors.grey;
+        return Colors.grey.shade700;
     }
   }
 
   Widget _buildLegend() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _legendItem(Colors.grey, 'Available'),
-        const SizedBox(width: 10),
-        _legendItem(Colors.yellow, 'Hold'),
-        const SizedBox(width: 10),
-        _legendItem(Colors.red, 'Reserved'),
-        const SizedBox(width: 10),
-        _legendItem(Colors.green, 'Selected'),
-      ],
-    );
-  }
-
-  Widget _legendItem(Color color, String label) {
-    return Row(
-      children: [
-        Container(
-          width: 20,
-          height: 20,
-          color: color,
-        ),
-        const SizedBox(width: 5),
-        Text(label, style: const TextStyle(color: Colors.white)),
-      ],
-    );
-  }
-
-  Widget _buildTheaterDetailsAndActions(BuildContext context, SeatState state) {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: Colors.black,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _legendItem(Icons.event_seat, Colors.grey.shade700, 'Available'),
+          const SizedBox(width: 16),
+          _legendItem(Icons.event_seat, Colors.amber, 'Hold'),
+          const SizedBox(width: 16),
+          _legendItem(Icons.event_seat, Colors.red, 'Reserved'),
+          const SizedBox(width: 16),
+          _legendItem(Icons.event_seat, Colors.green, 'Selected'),
+        ],
+      ),
+    );
+  }
+
+  Widget _legendItem(IconData icon, Color color, String label) {
+    return Row(
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(width: 5),
+        Text(label),
+      ],
+    );
+  }
+
+  // This widget is now used as the bottomNavigationBar.
+  Widget _buildTheaterDetailsAndActions(BuildContext context, SeatState state) {
+    // Calculate total price based on selected seats.
+    final double unitPrice = state.seatLayout?.price ?? 0;
+    final int seatCount = state.selectedSeats.length;
+    final double totalPrice = unitPrice * seatCount;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      // The container's decoration can be adjusted as needed.
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+              color: Theme.of(context).colorScheme.primary.withAlpha(30),
+              width: 1),
+        ),
+        color: Theme.of(context).colorScheme.primary.withAlpha(30),
+      ),
       child: Column(
+        mainAxisSize:
+            MainAxisSize.min, // Ensure it sizes itself to its content.
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Theater and Screening Details
-          const Row(
-            children: [
-              Icon(Icons.location_on, color: Colors.white, size: 16),
-              SizedBox(width: 4),
-              Text(
-                'Theatre Name, Screen Name',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          const Text('Date: 20 Nov', style: TextStyle(color: Colors.white)),
-          const Text('Time: 15:05', style: TextStyle(color: Colors.white)),
-          if (state.selectedSeats.isNotEmpty)
-            Text(
-              'Seats: ${state.selectedSeats.join(', ')}',
-              style: const TextStyle(color: Colors.white),
+          if (state.selectedSeats.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.event_seat, color: Colors.green, size: 34),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Selected Seats ',
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Theme.of(context).colorScheme.primary),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  state.selectedSeats.join(', '),
+                  style: const TextStyle(fontSize: 22),
+                )
+              ],
             ),
+          ],
           const SizedBox(height: 16),
-          // Total Price
-          const Text(
-            'Total Price',
-            style: TextStyle(
-                color: Colors.blue, fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const Text(
-            'Rs. 370.000',
-            style: TextStyle(
-                color: Colors.blue, fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const Text(
-            'Children (2 years old or above) are required to purchase ticket',
-            style: TextStyle(color: Colors.grey, fontSize: 12),
+          // Total Price Section
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.red.withAlpha(40),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.red.withAlpha(60)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total Price',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Price per seat is applied',
+                      style: TextStyle(color: Colors.blueGrey, fontSize: 12),
+                    ),
+                  ],
+                ),
+                Text(
+                  'Rs. ${totalPrice.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           // Action Buttons
           if (state.bookingStep == 'select' && state.selectedSeats.isNotEmpty)
-            ElevatedButton(
-              onPressed: () =>
-                  context.read<SeatBloc>().add(const HoldSeatsEvent()),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text('Hold Selected Seats',
-                  style: TextStyle(color: Colors.white)),
+            Button(
+              onPressed: () {
+                context.read<SeatBloc>().add(const HoldSeatsEvent());
+              },
+              text: "Hold Selected Seats",
             ),
           if (state.bookingStep == 'hold')
             Column(
               children: [
-                ElevatedButton(
-                  onPressed: () =>
-                      context.read<SeatBloc>().add(const ConfirmBookingEvent()),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  child: const Text('Pay now',
-                      style: TextStyle(color: Colors.white)),
+                Button(
+                  onPressed: () {
+                    _showPaymentDialog(context);
+                  },
+                  text: "Proceed to Payment",
                 ),
                 const SizedBox(height: 8),
                 TextButton(
-                  onPressed: () =>
-                      context.read<SeatBloc>().add(const ReleaseHoldEvent()),
-                  child: const Text('Release Hold',
-                      style: TextStyle(color: Colors.white)),
-                ),
+                  onPressed: () {
+                    context.read<SeatBloc>().add(const ReleaseHoldEvent());
+                  },
+                  style: TextButton.styleFrom(
+                    side: BorderSide(
+                        color: Theme.of(context).colorScheme.primary),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 50),
+                  ),
+                  child: const Text(
+                    'Release Hold',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                )
               ],
             ),
+        ],
+      ),
+    );
+  }
+
+  void _showPaymentDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        title: const Text(
+          'Payment methods',
+        ),
+        content: const Text(
+          'Please choose your payment method',
+        ),
+        actions: [
+          Button(
+            onPressed: () {
+              Navigator.pop(context);
+              context.read<SeatBloc>().add(const ConfirmBookingEvent());
+            },
+            text: "Direct Payment",
+          ),
+          const SizedBox(height: 15),
+          Button(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            text: "Khalti",
+            backgroundColor: Colors.deepPurpleAccent,
+          ),
+          const SizedBox(height: 15),
+          Button(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            text: "Cancel",
+            textColor: Theme.of(context).colorScheme.primary,
+            backgroundColor:
+                Theme.of(context).colorScheme.primary.withAlpha(15),
+          ),
         ],
       ),
     );
