@@ -11,28 +11,6 @@ class ScreeningRemoteDataSource implements IScreeningDataSource {
   ScreeningRemoteDataSource(this._dio);
 
   @override
-  // Future<Either<Failure, List<ScreeningEntity>>> getScreeningsByMovie(
-  //     String movieId) async {
-  //   try {
-  //     final response =
-  //         await _dio.get('${ApiEndpoints.getScreeningbyMovie}/$movieId');
-  //     if (response.statusCode == 200) {
-  //       final List<dynamic> screeningsJson = response.data;
-  //       final screenings = screeningsJson
-  //           .map((json) => ScreeningApiModel.fromJson(json).toEntity())
-  //           .toList();
-  //       return Right(screenings);
-  //     } else {
-  //       return Left(ApiFailure(
-  //           message: "Failed to fetch screenings",
-  //           statusCode: response.statusCode));
-  //     }
-  //   } on DioException catch (e) {
-  //     return Left(ApiFailure(message: "API Error: ${e.message}"));
-  //   } catch (e) {
-  //     return Left(ApiFailure(message: "Unexpected error: $e"));
-  //   }
-  // }
   Future<Either<Failure, List<ScreeningEntity>>> getScreeningsByMovie(
       String movieId) async {
     try {
