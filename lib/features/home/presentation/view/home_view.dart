@@ -3,7 +3,6 @@ import 'package:ClickEt/features/movie/presentation/view_model/movie_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// lib/features/home/presentation/view/home_view.dart
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
@@ -22,7 +21,14 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Welcome to ClickEt'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Text(
+          'Welcome to ClickEt',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: BlocBuilder<MovieBloc, MovieState>(
         builder: (context, state) {
@@ -41,30 +47,31 @@ class _HomeViewState extends State<HomeView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Now Showing Section
-                  const Text(
-                    'Now Showing',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      'Now Showing',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
                   ),
-                  const SizedBox(height: 8),
                   MovieCarousel(
                     movies: state.showingMovies,
                     viewportFraction: 0.8,
-                    carouselHeight: 300,
+                    carouselHeight: 240,
                     minScale: 0.8,
                     scaleOffset: 0.2,
                   ),
-                  const SizedBox(height: 16),
-
-                  // Upcoming Section
-                  const Text(
-                    'Upcoming',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  const SizedBox(
+                    height: 20,
                   ),
-                  const SizedBox(height: 8),
+                  // Upcoming Section
+                  Text('Upcoming',
+                      style: Theme.of(context).textTheme.headlineMedium),
+                  const SizedBox(height: 12), // Reduced gap
                   MovieCarousel(
                     movies: state.upcomingMovies,
                     viewportFraction: 0.8,
-                    carouselHeight: 300,
+                    carouselHeight: 270,
                     minScale: 0.8,
                     scaleOffset: 0.2,
                   ),
