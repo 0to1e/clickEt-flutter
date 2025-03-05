@@ -1,10 +1,6 @@
 import 'dart:io';
-
-import 'package:ClickEt/app/constants/api_endpoints.dart';
 import 'package:ClickEt/app/di/di.dart';
-import 'package:ClickEt/app/shared_prefs/token_shared_prefs.dart';
 import 'package:ClickEt/features/auth/presentation/view_model/login/login_bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -23,10 +19,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     on<RegisterUser>(_onRegisterUser);
     on<TogglePasswordVisibilityEvent>(_onTogglePasswordVisibility);
     on<NavigateToLoginEvent>(_onNavigateToLogin);
-    on<UploadImageEvent>(_onUploadImage);
   }
 
-  // Validation logic for registration form
   String? _validateRegistrationForm({
     required String fullName,
     required String userName,
@@ -34,7 +28,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     required String phone,
     required String password,
   }) {
-    // Validate empty fields
+
     if (fullName.isEmpty ||
         userName.isEmpty ||
         email.isEmpty ||
@@ -43,19 +37,16 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       return "All fields are required";
     }
 
-    // Validate email format
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(email)) {
       return "Please enter a valid email address";
     }
 
-    // Validate phone number format (assuming 10 digits)
     final phoneRegex = RegExp(r'^\d{10}$');
     if (!phoneRegex.hasMatch(phone)) {
       return "Please enter a valid 10-digit phone number";
     }
 
-    // Validate password requirements (e.g., minimum 8 characters)
     if (password.length < 8) {
       return "Password must be at least 8 characters long";
     }
@@ -86,7 +77,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   }
 
   void _onRegisterUser(RegisterUser event, Emitter<RegisterState> emit) async {
-    // Validate the registration form
     final validationError = _validateRegistrationForm(
       fullName: event.fullName,
       userName: event.username,
@@ -96,93 +86,67 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     );
 
     if (validationError != null) {
-      // Show validation error using SnackBar
+      emit(state.copyWith(error: validationError));
       ScaffoldMessenger.of(event.context).showSnackBar(
         SnackBar(content: Text(validationError)),
       );
-      return; // Stop further execution if validation fails
+      return;
     }
 
-    emit(state.copyWith(isLoading: true));
+    try {
+      emit(state.copyWith(isLoading: true, error: null));
 
-    final result = await _registerUseCase.call(
-      RegisterUserParams(
-        fullName: event.fullName,
-        userName: event.username,
-        email: event.email,
-        phoneNumber: event.phone,
-        password: event.password,
-      ),
-    );
+      final result = await _registerUseCase.call(
+        RegisterUserParams(
+          fullName: event.fullName,
+          userName: event.username,
+          email: event.email,
+          phoneNumber: event.phone,
+          password: event.password,
+        ),
+      );
 
-    result.fold(
-      (failure) {
-        emit(state.copyWith(isLoading: false, isSuccess: false));
-        ScaffoldMessenger.of(event.context).showSnackBar(
-          SnackBar(content: Text(failure.message)),
-        );
-      },
-      (success) {
-        emit(state.copyWith(isLoading: false, isSuccess: true));
+      result.fold(
+        (failure) {
+          emit(state.copyWith(
+            isLoading: false,
+            isSuccess: false,
+            error: failure.message,
+          ));
+          ScaffoldMessenger.of(event.context).showSnackBar(
+            SnackBar(content: Text(failure.message)),
+          );
+        },
+        (success) {
+          emit(state.copyWith(
+            isLoading: false,
+            isSuccess: true,
+            error: null,
+          ));
+          ScaffoldMessenger.of(event.context).showSnackBar(
+            const SnackBar(content: Text("Registration successful")),
+          );
 
-        // Show "Registration successful" SnackBar
-        ScaffoldMessenger.of(event.context).showSnackBar(
-          const SnackBar(content: Text("Registration successful")),
-        );
-
-        // Navigate to the login screen
-        Navigator.pushReplacement(
-          event.context,
-          MaterialPageRoute(
-            builder: (context) => BlocProvider(
-              create: (context) => getIt<LoginBloc>(),
-              child: const LoginView(),
+          Navigator.pushReplacement(
+            event.context,
+            MaterialPageRoute(
+              builder: (context) => BlocProvider(
+                create: (context) => getIt<LoginBloc>(),
+                child: const LoginView(),
+              ),
             ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _onUploadImage(
-      UploadImageEvent event, Emitter<RegisterState> emit) async {
-    emit(state.copyWith(isLoading: true));
-
-    final dio = Dio();
-    final token = await getIt<TokenSharedPrefs>().getToken();
-    token.fold(
-      (failure) {
-        emit(state.copyWith(isLoading: false, error: failure.message));
-      },
-      (token) {
-        final formData = FormData.fromMap({
-          'image': MultipartFile.fromFileSync(event.image.path),
-        });
-
-        dio
-            .post(
-          ApiEndpoints.uploadProfile,
-          data: formData,
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-            },
-          ),
-        )
-            .then((response) {
-          if (response.statusCode == 200) {
-            emit(state.copyWith(isLoading: false, isSuccess: true));
-            ScaffoldMessenger.of(event.context).showSnackBar(
-              const SnackBar(
-                  content: Text("Profile image uploaded successfully")),
-            );
-          } else {
-            emit(state.copyWith(isLoading: false, error: 'Upload failed'));
-          }
-        }).catchError((error) {
-          emit(state.copyWith(isLoading: false, error: 'Upload failed'));
-        });
-      },
-    );
+          );
+        },
+      );
+    } catch (e) {
+      emit(state.copyWith(
+        isLoading: false,
+        isSuccess: false,
+        error: 'An unexpected error occurred',
+      ));
+      ScaffoldMessenger.of(event.context).showSnackBar(
+        const SnackBar(content: Text('An unexpected error occurred')),
+      );
+    }
   }
 }
