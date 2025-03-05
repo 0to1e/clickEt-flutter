@@ -19,7 +19,6 @@ class ThemeCubit extends Cubit<bool> {
   }
 
   void _startListeningToLightSensor() {
-    // Use the static luxStream() method instead of an instance getter.
     LightSensor.luxStream().listen((lux) {
      
       bool newTheme = lux < 50; 
