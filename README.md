@@ -66,7 +66,7 @@ Authentication: JWT token-based Auth for secure user authentic
 
 # Clone the repository:
 ```bash
-git clone https://github.com/0to1e/ClickEt.git
+git clone https://github.com/0to1e/ClickEt-flutter.git
 cd ClickEt
 ```
 
