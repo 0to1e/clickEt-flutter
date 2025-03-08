@@ -16,8 +16,6 @@ Features
 
 📱 Cross-Platform Support: Works on both Android and iOS.
 
-🏷️ Discounts & Offers: Special promotions and referral discounts.
-
 # Technology Stack
 
 Frontend: Flutter (Dart)
@@ -30,7 +28,7 @@ State Management: BLoC Pattern
 
 Authentication: JWT
 
-Payment Gateway: Razorpay / Stripe
+Payment Gateway: Khalti
 
 # Prerequisites
 
@@ -48,7 +46,7 @@ Remote Data: RESTful APIs using Node.js, Express.js, and MongoDB.
 
 Encryption: Data is encrypted at rest and in transit for security.
 
-Authentication: JWT tokens/Firebase Auth for secure user authentic
+Authentication: JWT token-based Auth for secure user authentic
 
 <img width="135" alt="image" src="https://github.com/user-attachments/assets/fcb7b8c6-bd57-4166-8f4e-ec71f04f0405" />
 <img width="136" alt="image-1" src="https://github.com/user-attachments/assets/038d0800-5abc-40b0-9248-e74fbb542d8f" />
@@ -68,7 +66,7 @@ Authentication: JWT tokens/Firebase Auth for secure user authentic
 
 # Clone the repository:
 ```bash
-git clone https://github.com/your-username/ClickEt.git
+git clone https://github.com/0to1e/ClickEt.git
 cd ClickEt
 ```
 
