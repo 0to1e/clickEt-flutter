@@ -21,6 +21,11 @@ class AppTheme {
             fontWeight: FontWeight.bold,
             color: isDarkMode ? Colors.white : Colors.black,
           ),
+          headlineMedium: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.w600,
+            color: isDarkMode ? Colors.white : Colors.black,
+          ),
           bodyLarge: TextStyle(
             fontSize: 17,
             color: isDarkMode ? Colors.white : Colors.black,

@@ -34,7 +34,6 @@ class MovieRepository implements IMovieRepository {
       );
       return result;
     } else {
-       debugPrint("Fetching movies from local source");
       return localFetch();
     }
   }

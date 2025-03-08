@@ -1,6 +1,4 @@
-
 import 'package:ClickEt/app/di/di.dart';
-import 'package:ClickEt/common/image_upload_dialog.dart';
 import 'package:ClickEt/common/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,17 +16,32 @@ class RegistrationView extends StatelessWidget {
   }
 }
 
-class RegistrationViewContent extends StatelessWidget {
+class RegistrationViewContent extends StatefulWidget {
   const RegistrationViewContent({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final TextEditingController fullNameController = TextEditingController();
-    final TextEditingController userNameController = TextEditingController();
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController phoneController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
+  State<RegistrationViewContent> createState() => _RegistrationViewContentState();
+}
 
+class _RegistrationViewContentState extends State<RegistrationViewContent> {
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController userNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    fullNameController.dispose();
+    userNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(
@@ -37,13 +50,11 @@ class RegistrationViewContent extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Top Icon (Logo)
               Image.asset(
                 "lib/assets/Logo.png",
                 width: 150,
               ),
               const SizedBox(height: 20),
-              // Title and Subtitle
               Text(
                 "Create an Account",
                 style: Theme.of(context).textTheme.headlineLarge,
@@ -54,18 +65,17 @@ class RegistrationViewContent extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 30),
-              // Registration Form
               Form(
                 child: Column(
                   children: [
-                    // Full Name Input
                     TextField(
                       controller: fullNameController,
                       decoration: InputDecoration(
                         labelText: 'Full name',
                         labelStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 15),
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 15,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0),
                         ),
@@ -74,7 +84,9 @@ class RegistrationViewContent extends StatelessWidget {
                           color: Theme.of(context).colorScheme.primary,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14.0, horizontal: 30.0),
+                          vertical: 14.0,
+                          horizontal: 30.0,
+                        ),
                         constraints: const BoxConstraints(
                           minHeight: 50.0,
                           maxHeight: 50.0,
@@ -82,14 +94,14 @@ class RegistrationViewContent extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    // Username Input
                     TextField(
                       controller: userNameController,
                       decoration: InputDecoration(
                         labelText: 'User name',
                         labelStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 15),
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 15,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0),
                         ),
@@ -98,7 +110,9 @@ class RegistrationViewContent extends StatelessWidget {
                           color: Theme.of(context).colorScheme.primary,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14.0, horizontal: 30.0),
+                          vertical: 14.0,
+                          horizontal: 30.0,
+                        ),
                         constraints: const BoxConstraints(
                           minHeight: 50.0,
                           maxHeight: 50.0,
@@ -106,14 +120,14 @@ class RegistrationViewContent extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    // Email Input
                     TextField(
                       controller: emailController,
                       decoration: InputDecoration(
                         labelText: 'Email-address',
                         labelStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 15),
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 15,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0),
                         ),
@@ -122,7 +136,9 @@ class RegistrationViewContent extends StatelessWidget {
                           color: Theme.of(context).colorScheme.primary,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14.0, horizontal: 30.0),
+                          vertical: 14.0,
+                          horizontal: 30.0,
+                        ),
                         constraints: const BoxConstraints(
                           minHeight: 50.0,
                           maxHeight: 50.0,
@@ -131,14 +147,14 @@ class RegistrationViewContent extends StatelessWidget {
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 18),
-                    // Phone Input
                     TextField(
                       controller: phoneController,
                       decoration: InputDecoration(
                         labelText: 'Phone number',
                         labelStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 15),
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 15,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0),
                         ),
@@ -147,7 +163,9 @@ class RegistrationViewContent extends StatelessWidget {
                           color: Theme.of(context).colorScheme.primary,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14.0, horizontal: 30.0),
+                          vertical: 14.0,
+                          horizontal: 30.0,
+                        ),
                         constraints: const BoxConstraints(
                           minHeight: 50.0,
                           maxHeight: 50.0,
@@ -156,7 +174,6 @@ class RegistrationViewContent extends StatelessWidget {
                       keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 18),
-                    // Password Input
                     BlocBuilder<RegisterBloc, RegisterState>(
                       builder: (context, state) {
                         return TextField(
@@ -187,7 +204,9 @@ class RegistrationViewContent extends StatelessWidget {
                               },
                             ),
                             contentPadding: const EdgeInsets.symmetric(
-                                vertical: 14.0, horizontal: 30.0),
+                              vertical: 14.0,
+                              horizontal: 30.0,
+                            ),
                             constraints: const BoxConstraints(
                               minHeight: 50.0,
                               maxHeight: 50.0,
@@ -200,7 +219,6 @@ class RegistrationViewContent extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 40),
-              // Sign Up Button
               Button(
                 width: 150.0,
                 onPressed: () {
@@ -218,7 +236,6 @@ class RegistrationViewContent extends StatelessWidget {
                 text: "Sign Up",
               ),
               const SizedBox(height: 30),
-              // Login Link
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -242,29 +259,6 @@ class RegistrationViewContent extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 20),
-              // Upload Image Button
-              Button(
-                width: 150.0,
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return ImageUploadDialog(
-                        onImagePicked: (file) {
-                          if (file != null) {
-                            context.read<RegisterBloc>().add(
-                                  UploadImageEvent(
-                                      image: file, context: context),
-                                );
-                          }
-                        },
-                      );
-                    },
-                  );
-                },
-                text: "Upload Image",
               ),
             ],
           ),

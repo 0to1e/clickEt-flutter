@@ -30,7 +30,7 @@ class MovieCard extends StatelessWidget {
               boxShadow: [
                 if (isFocused)
                   BoxShadow(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                    color: Theme.of(context).colorScheme.primary.withAlpha(70),
                     blurRadius: 15,
                     spreadRadius: 2,
                     offset: const Offset(0, 0),

@@ -1,14 +1,10 @@
-import 'package:ClickEt/app/di/di.dart';
-import 'package:ClickEt/common/widgets/main_screen.dart';
-import 'package:ClickEt/features/auth/presentation/view/registration_view.dart';
-import 'package:ClickEt/features/auth/presentation/view_model/register/register_bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/material.dart';
+import 'package:ClickEt/core/sensor/shake_cubit.dart';
 import 'package:ClickEt/features/auth/domain/use_case/login_use_case.dart';
 import 'package:ClickEt/features/movie/presentation/view_model/movie_bloc.dart';
 import 'package:ClickEt/network/hive_service.dart';
-import 'package:ClickEt/core/sensor/shake_cubit.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -17,7 +13,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginUseCase loginUseCase;
   final MovieBloc movieBloc;
   final HiveService hiveService;
-  final ShakeCubit shakeCubit; // Injected ShakeCubit for shake detection
+  final ShakeCubit shakeCubit;
 
   LoginBloc({
     required this.loginUseCase,
@@ -40,9 +36,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
 
     if (validationError != null) {
-      ScaffoldMessenger.of(event.context).showSnackBar(
-        SnackBar(content: Text(validationError)),
-      );
+      emit(state.copyWith(errorMessage: validationError));
       return;
     }
 
@@ -54,20 +48,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
     result.fold(
       (failure) {
-        emit(state.copyWith(isLoading: false, isSuccess: false));
-        ScaffoldMessenger.of(event.context).showSnackBar(
-          const SnackBar(content: Text("Invalid Credentials")),
-        );
+        emit(state.copyWith(
+          isLoading: false,
+          isSuccess: false,
+          errorMessage: "Invalid Credentials",
+        ));
       },
       (response) {
         emit(state.copyWith(
-            isLoading: false, isSuccess: true, isLoggedIn: true));
+          isLoading: false,
+          isSuccess: true,
+          isLoggedIn: true,
+          navigateToMain: true,
+          errorMessage: "Login SUccessful"
+        ));
         shakeCubit.startListening();
-
-        Navigator.pushReplacement(
-          event.context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
-        );
       },
     );
   }
@@ -89,22 +84,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   void _onNavigateToRegister(
       NavigateToRegisterEvent event, Emitter<LoginState> emit) {
-    Navigator.pushReplacement(
-      event.context,
-      MaterialPageRoute(
-        builder: (context) => BlocProvider(
-          create: (context) => getIt<RegisterBloc>(),
-          child: const RegistrationView(),
-        ),
-      ),
-    );
+    emit(state.copyWith(navigateToRegister: true)); // Signal navigation
   }
 
   void navigateToRegister(BuildContext context) {
     add(NavigateToRegisterEvent(context: context));
   }
 
-  // Validation logic for login form
   String? _validateLoginForm(
       {required String usernameOrEmail, required String password}) {
     if (usernameOrEmail.isEmpty || password.isEmpty) {

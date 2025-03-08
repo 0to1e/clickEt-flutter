@@ -24,9 +24,6 @@ class LoginSubmittedEvent extends LoginEvent {
 
 class TogglePasswordVisibilityEvent extends LoginEvent {
   const TogglePasswordVisibilityEvent();
-
-  @override
-  List<Object> get props => [];
 }
 
 class NavigateToRegisterEvent extends LoginEvent {
@@ -40,7 +37,5 @@ class NavigateToRegisterEvent extends LoginEvent {
 
 class LogOutEvent extends LoginEvent {
   const LogOutEvent();
-
-  @override
-  List<Object> get props => [];
 }
+

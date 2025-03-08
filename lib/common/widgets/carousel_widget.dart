@@ -84,10 +84,12 @@ class _MovieCarouselState extends State<MovieCarousel> {
             },
           ),
         ),
-        const SizedBox(height: 8),
         Text(
           widget.movies[_currentPage.round()].name,
-          style: Theme.of(context).textTheme.headlineSmall,
+          style: TextStyle(
+              fontSize: 25,
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),

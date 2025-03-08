@@ -24,7 +24,10 @@ class MovieDetailsView extends StatelessWidget {
           getIt<ScreeningBloc>()..add(FetchScreeningsEvent(movie.id)),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(movie.name),
+          title: Text(
+            movie.name,
+          ),
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
         body: SingleChildScrollView(
           child: Column(
